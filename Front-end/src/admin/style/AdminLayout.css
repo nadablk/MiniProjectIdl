@@ -1,12 +1,12 @@
 .admin-container {
   min-height: 100vh;
-  background-color: #E8DCCC;
+  background-color: #e8dccc;
 }
 
 /* Header Styles */
 .admin-header {
-  background-color: #603B28;
-  color: #E8DCCC;
+  background-color: #603b28;
+  color: #e8dccc;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
@@ -38,15 +38,15 @@
 .system-name {
   font-size: 1.8rem;
   font-weight: 700;
-  font-family: 'Georgia', serif;
-  color: #E8DCCC;
+  font-family: "Georgia", serif;
+  color: #e8dccc;
   letter-spacing: 0.5px;
   margin: 0;
 }
 
 .system-subtitle {
   font-size: 0.75rem;
-  color: #E8DCCC;
+  color: #e8dccc;
   opacity: 0.85;
   font-weight: 300;
   letter-spacing: 0.3px;
@@ -69,7 +69,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.7rem 1.2rem;
-  color: #E8DCCC;
+  color: #e8dccc;
   text-decoration: none;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -89,14 +89,14 @@
 }
 
 .nav-link.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 60%;
   height: 3px;
-  background-color: #E8DCCC;
+  background-color: #e8dccc;
   border-radius: 2px 2px 0 0;
 }
 
@@ -139,8 +139,8 @@
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
   background-color: transparent;
-  color: #E8DCCC;
-  border: 1.5px solid #E8DCCC;
+  color: #e8dccc;
+  border: 1.5px solid #e8dccc;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
@@ -154,8 +154,8 @@
 }
 
 .logout-btn:hover {
-  background-color: #E8DCCC;
-  color: #603B28;
+  background-color: #e8dccc;
+  color: #603b28;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }

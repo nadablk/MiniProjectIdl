@@ -5,6 +5,7 @@
 Professional university management system with admin and student interfaces built with React.js and Spring Boot.
 
 ### 🎨 Design
+
 - **Primary Color**: `#603B28` (Brown - Navigation bars)
 - **Secondary Color**: `#E8DCCC` (Cream - Page backgrounds)
 - **Accent Color**: `#8B5A3C` (Light Brown)
@@ -12,17 +13,21 @@ Professional university management system with admin and student interfaces buil
 ### 🔐 Authentication System
 
 #### Login Credentials
+
 **Admin Access:**
+
 - Email: `admin@philo.com`
 - Password: `azerty`
 - Redirects to: `/admin/dashboard`
 
 **Student Access:**
+
 - Email: `student@philo.com`
 - Password: `azerty`
 - Redirects to: `/student/home`
 
 #### Features
+
 - Protected routes based on user roles
 - Persistent login (localStorage)
 - Beautiful animated login page
@@ -74,19 +79,18 @@ Backend_spring/
 ### 🎯 Completed Features
 
 #### Admin Interface ✅
+
 - **Professional Dashboard**
   - Statistics cards (Students, Teachers, Courses, Departments)
   - Recent activities feed
   - Quick action buttons
   - System status monitoring
   - Upcoming events calendar
-  
 - **Student Management Page**
   - Student table with search
   - Filter by status
   - Add/Edit/Delete students
   - Modal form for adding students
-  
 - **Navigation**
   - Top navigation bar with Philosophe logo
   - Links: Dashboard, Students, Teachers, Courses, Departments
@@ -94,26 +98,26 @@ Backend_spring/
   - Logout functionality
 
 #### Student Interface ✅
+
 - **Home Page**
   - Welcome section with student info
   - My Courses section
   - Recent grades display
   - Today's schedule
   - Announcements
-  
 - **Navigation**
   - Home, My Courses, Notes, Schedule
   - User profile display
   - Logout functionality
 
 #### Authentication ✅
+
 - **Login Page**
   - Beautiful animated gradient background
   - Professional form design
   - Error handling
   - Remember me option
   - Demo credentials display
-  
 - **Security**
   - Role-based access control
   - Protected routes
@@ -123,27 +127,33 @@ Backend_spring/
 ### 🚀 How to Run
 
 #### Backend (Spring Boot)
+
 ```powershell
 cd "Backend_spring"
 ./mvnw spring-boot:run
 ```
+
 Server runs on: `http://localhost:8081`
 
 #### Frontend (React)
+
 ```powershell
 cd "Front-end"
 npm run dev
 ```
+
 App runs on: `http://localhost:5173`
 
 ### 📋 Next Steps
 
 1. **Complete Admin Pages**
+
    - Teachers management
    - Courses management
    - Departments management
 
 2. **Backend Integration**
+
    - Connect to Spring Boot API (port 8081)
    - Implement GraphQL queries
    - Real authentication with database

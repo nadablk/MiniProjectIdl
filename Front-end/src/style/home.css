@@ -1,12 +1,12 @@
 .student-home {
   min-height: 100vh;
-  background-color: #E8DCCC;
+  background-color: #e8dccc;
 }
 
 /* Header */
 .student-header {
-  background-color: #603B28;
-  color: #E8DCCC;
+  background-color: #603b28;
+  color: #e8dccc;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
@@ -38,8 +38,8 @@
 .system-name {
   font-size: 1.8rem;
   font-weight: 700;
-  font-family: 'Georgia', serif;
-  color: #E8DCCC;
+  font-family: "Georgia", serif;
+  color: #e8dccc;
   letter-spacing: 0.5px;
   margin: 0;
 }
@@ -58,7 +58,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.7rem 1.2rem;
-  color: #E8DCCC;
+  color: #e8dccc;
   text-decoration: none;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -77,14 +77,14 @@
 }
 
 .nav-link.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 60%;
   height: 3px;
-  background-color: #E8DCCC;
+  background-color: #e8dccc;
   border-radius: 2px 2px 0 0;
 }
 
@@ -116,8 +116,8 @@
 .logout-btn {
   padding: 0.6rem 1.2rem;
   background-color: transparent;
-  color: #E8DCCC;
-  border: 1.5px solid #E8DCCC;
+  color: #e8dccc;
+  border: 1.5px solid #e8dccc;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
@@ -126,8 +126,8 @@
 }
 
 .logout-btn:hover {
-  background-color: #E8DCCC;
-  color: #603B28;
+  background-color: #e8dccc;
+  color: #603b28;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -149,15 +149,15 @@
 }
 
 .welcome-section h2 {
-  color: #603B28;
+  color: #603b28;
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
 }
 
 .welcome-section p {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-size: 1rem;
   margin: 0;
 }
@@ -188,19 +188,19 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #F5E6D3;
+  border-bottom: 2px solid #f5e6d3;
 }
 
 .card-header h3 {
-  color: #603B28;
+  color: #603b28;
   font-size: 1.3rem;
   font-weight: 600;
   margin: 0;
 }
 
 .badge {
-  background: #603B28;
-  color: #E8DCCC;
+  background: #603b28;
+  color: #e8dccc;
   padding: 0.4rem 0.9rem;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -208,7 +208,7 @@
 }
 
 .view-all {
-  color: #603B28;
+  color: #603b28;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
@@ -216,7 +216,7 @@
 }
 
 .view-all:hover {
-  color: #8B5A3C;
+  color: #8b5a3c;
   text-decoration: underline;
 }
 
@@ -232,20 +232,20 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .course-item:hover {
-  background: #F5E6D3;
+  background: #f5e6d3;
   transform: translateX(4px);
 }
 
 .course-icon {
   width: 45px;
   height: 45px;
-  background: #E8DCCC;
+  background: #e8dccc;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -259,14 +259,14 @@
 }
 
 .course-info h4 {
-  color: #603B28;
+  color: #603b28;
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.3rem 0;
 }
 
 .course-info p {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-size: 0.85rem;
   margin: 0;
 }
@@ -279,8 +279,8 @@
 }
 
 .course-status.ongoing {
-  background: #D1FAE5;
-  color: #065F46;
+  background: #d1fae5;
+  color: #065f46;
 }
 
 /* Grades */
@@ -295,13 +295,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .grade-item:hover {
-  background: #F5E6D3;
+  background: #f5e6d3;
 }
 
 .grade-subject {
@@ -311,13 +311,13 @@
 }
 
 .subject-name {
-  color: #603B28;
+  color: #603b28;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .grade-date {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-size: 0.85rem;
 }
 
@@ -329,13 +329,13 @@
 }
 
 .grade-value.excellent {
-  background: #D1FAE5;
-  color: #065F46;
+  background: #d1fae5;
+  color: #065f46;
 }
 
 .grade-value.good {
-  background: #DBEAFE;
-  color: #1E40AF;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 /* Schedule */
@@ -349,19 +349,19 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .schedule-item:hover {
-  background: #F5E6D3;
+  background: #f5e6d3;
   transform: translateX(4px);
 }
 
 .time-badge {
-  background: #603B28;
-  color: #E8DCCC;
+  background: #603b28;
+  color: #e8dccc;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 700;
@@ -373,14 +373,14 @@
 }
 
 .schedule-info h4 {
-  color: #603B28;
+  color: #603b28;
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.3rem 0;
 }
 
 .schedule-info p {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-size: 0.85rem;
   margin: 0;
 }
@@ -396,13 +396,13 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .announcement-item:hover {
-  background: #F5E6D3;
+  background: #f5e6d3;
 }
 
 .announcement-icon {
@@ -411,14 +411,14 @@
 }
 
 .announcement-content h4 {
-  color: #603B28;
+  color: #603b28;
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.3rem 0;
 }
 
 .announcement-content p {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-size: 0.85rem;
   margin: 0;
 }

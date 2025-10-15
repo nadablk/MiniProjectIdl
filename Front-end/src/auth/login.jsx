@@ -1,34 +1,34 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import '../style/login.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import "../style/login.css";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     const result = await login(email, password);
-    
+
     if (result.success) {
       // Route based on user role
-      if (result.user.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (result.user.role === 'student') {
-        navigate('/student/home');
+      if (result.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (result.user.role === "student") {
+        navigate("/student/home");
       }
     } else {
       setError(result.error);
     }
-    
+
     setLoading(false);
   };
 
@@ -39,13 +39,36 @@ const Login = () => {
           {/* Logo and Title */}
           <div className="login-header">
             <div className="login-logo">
-              <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="30" cy="30" r="28" fill="#603B28" stroke="#603B28" strokeWidth="2"/>
-                <text x="30" y="40" fontSize="32" fontWeight="bold" fill="#E8DCCC" textAnchor="middle" fontFamily="Georgia, serif">Φ</text>
+              <svg
+                width="60"
+                height="60"
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="30"
+                  cy="30"
+                  r="28"
+                  fill="#603B28"
+                  stroke="#603B28"
+                  strokeWidth="2"
+                />
+                <text
+                  x="30"
+                  y="40"
+                  fontSize="32"
+                  fontWeight="bold"
+                  fill="#E8DCCC"
+                  textAnchor="middle"
+                  fontFamily="Georgia, serif"
+                >
+                  Φ
+                </text>
               </svg>
             </div>
             <h1>Philosophe</h1>
-            <p className="login-subtitle">Système de Gestion Universitaire</p>
+            <p className="login-subtitle">University Management System</p>
           </div>
 
           {/* Login Form */}
@@ -64,13 +87,13 @@ const Login = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre.email@philosophe.edu"
+                placeholder="your.email@philosophe.edu"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Mot de passe</label>
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 id="password"
@@ -84,25 +107,27 @@ const Login = () => {
             <div className="form-options">
               <label className="remember-me">
                 <input type="checkbox" />
-                <span>Se souvenir de moi</span>
+                <span>Remember me</span>
               </label>
-              <a href="#" className="forgot-password">Mot de passe oublié?</a>
+              <a href="#" className="forgot-password">
+                Forgot password?
+              </a>
             </div>
 
             <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? 'Connexion...' : 'Se connecter'}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           {/* Demo Credentials */}
           <div className="demo-credentials">
-            <p className="demo-title">Identifiants de démonstration:</p>
+            <p className="demo-title">Demo Credentials:</p>
             <div className="demo-accounts">
               <div className="demo-account">
                 <strong>Admin:</strong> admin@philo.com / azerty
               </div>
               <div className="demo-account">
-                <strong>Étudiant:</strong> student@philo.com / azerty
+                <strong>Student:</strong> student@philo.com / azerty
               </div>
             </div>
           </div>

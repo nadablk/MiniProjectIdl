@@ -5,14 +5,14 @@
 }
 
 :root {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  
-  --primary-color: #603B28;
-  --secondary-color: #E8DCCC;
-  --accent-color: #8B5A3C;
-  
+
+  --primary-color: #603b28;
+  --secondary-color: #e8dccc;
+  --accent-color: #8b5a3c;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,8 +23,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #E8DCCC;
-  color: #603B28;
+  background-color: #e8dccc;
+  color: #603b28;
 }
 
 #root {

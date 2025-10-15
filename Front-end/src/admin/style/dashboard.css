@@ -2,6 +2,19 @@
   width: 100%;
 }
 
+/* Error Banner */
+.error-banner {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Dashboard Header */
 .dashboard-header {
   margin-bottom: 2rem;
@@ -9,14 +22,14 @@
 
 .dashboard-header h1 {
   font-size: 2.2rem;
-  color: #603B28;
+  color: #603b28;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
 }
 
 .dashboard-subtitle {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-size: 1rem;
   opacity: 0.9;
 }
@@ -47,11 +60,11 @@
 }
 
 .stat-card.students {
-  border-left-color: #3B82F6;
+  border-left-color: #3b82f6;
 }
 
 .stat-card.courses {
-  border-left-color: #F59E0B;
+  border-left-color: #f59e0b;
 }
 
 .stat-icon {
@@ -61,11 +74,11 @@
 }
 
 .stat-card.students .stat-icon {
-  color: #3B82F6;
+  color: #3b82f6;
 }
 
 .stat-card.courses .stat-icon {
-  color: #F59E0B;
+  color: #f59e0b;
 }
 
 .stat-content {
@@ -75,14 +88,14 @@
 .stat-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #603B28;
+  color: #603b28;
   margin: 0;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.95rem;
-  color: #8B5A3C;
+  color: #8b5a3c;
   margin: 0.5rem 0 0 0;
   font-weight: 500;
 }
@@ -96,13 +109,13 @@
 }
 
 .stat-trend.positive {
-  background-color: #D1FAE5;
-  color: #065F46;
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
 .stat-trend.neutral {
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 /* Dashboard Content Grid */
@@ -131,20 +144,20 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #F5E6D3;
+  border-bottom: 2px solid #f5e6d3;
 }
 
 .card-header h2 {
   font-size: 1.3rem;
-  color: #603B28;
+  color: #603b28;
   font-weight: 600;
   margin: 0;
 }
 
 .view-all-btn {
   background: transparent;
-  color: #603B28;
-  border: 1px solid #603B28;
+  color: #603b28;
+  border: 1px solid #603b28;
   padding: 0.4rem 1rem;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -154,8 +167,8 @@
 }
 
 .view-all-btn:hover {
-  background: #603B28;
-  color: #E8DCCC;
+  background: #603b28;
+  color: #e8dccc;
 }
 
 /* Activities Card */
@@ -174,13 +187,13 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .activity-item:hover {
-  background: #F5E6D3;
+  background: #f5e6d3;
   transform: translateX(4px);
 }
 
@@ -201,13 +214,13 @@
 }
 
 .activity-icon.student {
-  background: #DBEAFE;
-  color: #1E40AF;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .activity-icon.course {
-  background: #FEF3C7;
-  color: #92400E;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .activity-content {
@@ -216,19 +229,19 @@
 
 .activity-action {
   font-weight: 600;
-  color: #603B28;
+  color: #603b28;
   margin: 0 0 0.3rem 0;
   font-size: 0.95rem;
 }
 
 .activity-name {
-  color: #8B5A3C;
+  color: #8b5a3c;
   margin: 0;
   font-size: 0.9rem;
 }
 
 .activity-time {
-  color: #A0826D;
+  color: #a0826d;
   font-size: 0.85rem;
   white-space: nowrap;
 }
@@ -241,8 +254,8 @@
 }
 
 .quick-action-btn {
-  background: linear-gradient(135deg, #603B28 0%, #8B5A3C 100%);
-  color: #E8DCCC;
+  background: linear-gradient(135deg, #603b28 0%, #8b5a3c 100%);
+  color: #e8dccc;
   border: none;
   padding: 1.5rem 1.2rem;
   border-radius: 10px;
@@ -284,13 +297,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.8rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 6px;
 }
 
 .status-label {
   font-weight: 600;
-  color: #603B28;
+  color: #603b28;
   font-size: 0.9rem;
 }
 
@@ -302,12 +315,12 @@
 }
 
 .status-indicator.online {
-  background: #D1FAE5;
-  color: #065F46;
+  background: #d1fae5;
+  color: #065f46;
 }
 
 .status-value {
-  color: #8B5A3C;
+  color: #8b5a3c;
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -323,13 +336,13 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: #FAF8F5;
+  background: #faf8f5;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .event-item:hover {
-  background: #F5E6D3;
+  background: #f5e6d3;
   transform: translateX(4px);
 }
 
@@ -338,8 +351,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #603B28;
-  color: #E8DCCC;
+  background: #603b28;
+  color: #e8dccc;
   padding: 0.8rem;
   border-radius: 8px;
   min-width: 60px;
@@ -358,14 +371,14 @@
 }
 
 .event-details h4 {
-  color: #603B28;
+  color: #603b28;
   margin: 0 0 0.3rem 0;
   font-size: 1rem;
   font-weight: 600;
 }
 
 .event-details p {
-  color: #8B5A3C;
+  color: #8b5a3c;
   margin: 0;
   font-size: 0.85rem;
 }
