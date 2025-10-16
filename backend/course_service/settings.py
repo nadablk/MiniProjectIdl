@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',  # Add this
+    'courses',  # Just 'courses', not 'backend.courses'
 ]
 
 MIDDLEWARE = [
@@ -49,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.urls'
+ROOT_URLCONF = 'course_service.urls'
 
 TEMPLATES = [
     {
@@ -66,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+WSGI_APPLICATION = 'course_service.wsgi.application'
 
 
 # Database
@@ -75,8 +77,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CourseServiceDB',        # create this in pgAdmin
-        'USER': 'postgres',            # or your username
+        'NAME': 'CourseServiceDB',        
+        'USER': 'postgres',           
         'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
