@@ -10,6 +10,7 @@ const Courses = () => {
   const [showCourseModal, setShowCourseModal] = useState(false);
   const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [editingEnrollment, setEditingEnrollment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("courses"); // 'courses' or 'enrollments'
@@ -142,7 +143,16 @@ const Courses = () => {
   const handleEnrollmentSubmit = async (e) => {
     e.preventDefault();
     try {
-      await enrollmentAPI.createEnrollment(enrollmentFormData);
+      if (editingEnrollment) {
+        // Update existing enrollment
+        await enrollmentAPI.updateEnrollment(
+          editingEnrollment.id,
+          enrollmentFormData
+        );
+      } else {
+        // Create new enrollment
+        await enrollmentAPI.createEnrollment(enrollmentFormData);
+      }
       setShowEnrollmentModal(false);
       setEnrollmentFormData({
         student: "",
@@ -150,11 +160,34 @@ const Courses = () => {
         grade: "",
         enrollment_date: new Date().toISOString().split("T")[0],
       });
+      setEditingEnrollment(null);
       fetchEnrollments();
     } catch (err) {
       console.error("Error saving enrollment:", err);
       alert("Failed to save enrollment");
     }
+  };
+
+  const handleEditEnrollment = (enrollment) => {
+    setEditingEnrollment(enrollment);
+    setEnrollmentFormData({
+      student: enrollment.student || "",
+      course: enrollment.course || "",
+      grade: enrollment.grade || "",
+      enrollment_date: enrollment.enrollment_date || new Date().toISOString().split("T")[0],
+    });
+    setShowEnrollmentModal(true);
+  };
+
+  const handleAddNewEnrollment = () => {
+    setEditingEnrollment(null);
+    setEnrollmentFormData({
+      student: "",
+      course: "",
+      grade: "",
+      enrollment_date: new Date().toISOString().split("T")[0],
+    });
+    setShowEnrollmentModal(true);
   };
 
   const handleDeleteEnrollment = async (id) => {
@@ -184,6 +217,7 @@ const Courses = () => {
 
   const handleCloseEnrollmentModal = () => {
     setShowEnrollmentModal(false);
+    setEditingEnrollment(null);
     setEnrollmentFormData({
       student: "",
       course: "",
@@ -235,7 +269,7 @@ const Courses = () => {
           onClick={
             activeTab === "courses"
               ? handleAddNewCourse
-              : () => setShowEnrollmentModal(true)
+              : handleAddNewEnrollment
           }
         >
           <span className="btn-icon">➕</span>
@@ -382,6 +416,13 @@ const Courses = () => {
                     <td>
                       <div className="action-buttons">
                         <button
+                          className="action-btn edit"
+                          title="Edit"
+                          onClick={() => handleEditEnrollment(enrollment)}
+                        >
+                          ✏️
+                        </button>
+                        <button
                           className="action-btn delete"
                           title="Delete"
                           onClick={() => handleDeleteEnrollment(enrollment.id)}
@@ -475,7 +516,7 @@ const Courses = () => {
         <div className="modal-overlay" onClick={handleCloseEnrollmentModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Add Enrollment</h2>
+              <h2>{editingEnrollment ? "Edit Enrollment" : "Add Enrollment"}</h2>
               <button
                 className="close-btn"
                 onClick={handleCloseEnrollmentModal}
@@ -491,6 +532,7 @@ const Courses = () => {
                   value={enrollmentFormData.student}
                   onChange={handleEnrollmentInputChange}
                   required
+                  disabled={editingEnrollment} // Disable when editing
                 >
                   <option value="">Select Student</option>
                   {students.map((student) => (
@@ -507,6 +549,7 @@ const Courses = () => {
                   value={enrollmentFormData.course}
                   onChange={handleEnrollmentInputChange}
                   required
+                  disabled={editingEnrollment} // Disable when editing
                 >
                   <option value="">Select Course</option>
                   {courses.map((course) => (
@@ -518,7 +561,7 @@ const Courses = () => {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Grade (Optional)</label>
+                  <label>Grade</label>
                   <input
                     type="text"
                     name="grade"
@@ -547,7 +590,7 @@ const Courses = () => {
                   Cancel
                 </button>
                 <button type="submit" className="submit-btn">
-                  Add Enrollment
+                  {editingEnrollment ? "Update Enrollment" : "Add Enrollment"}
                 </button>
               </div>
             </form>
