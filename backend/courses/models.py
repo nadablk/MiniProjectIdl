@@ -24,7 +24,9 @@ class Course(models.Model):
     
     instructor = models.CharField(
         max_length=150,
-        verbose_name="Instructor Name"
+        verbose_name="Instructor Name",
+        blank=True,
+        null=True
     )
     
     category = models.CharField(
@@ -45,6 +47,12 @@ class Course(models.Model):
         blank=True,
         null=True,
         verbose_name="Course Description"
+    )
+    
+    credits = models.IntegerField(
+        default=3,
+        verbose_name="Credits",
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
     
     created_at = models.DateTimeField(
