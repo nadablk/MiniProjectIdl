@@ -10,21 +10,21 @@ This document confirms that **ALL** provided APIs are now fully integrated and f
 
 ### **Admin Side (`/admin/courses`)**
 
-| API Endpoint | Method | Usage | Status |
-|-------------|--------|-------|--------|
-| `GET /api/courses/` | GET | List all courses in admin table | ✅ Used |
-| `POST /api/courses/` | POST | Create new course via modal form | ✅ Used |
-| `GET /api/courses/{id}/` | GET | Fetch course details for editing | ✅ Available* |
-| `PUT /api/courses/{id}/` | PUT | Update course via edit modal | ✅ Used |
-| `DELETE /api/courses/{id}/` | DELETE | Delete course with confirmation | ✅ Used |
+| API Endpoint                | Method | Usage                            | Status         |
+| --------------------------- | ------ | -------------------------------- | -------------- |
+| `GET /api/courses/`         | GET    | List all courses in admin table  | ✅ Used        |
+| `POST /api/courses/`        | POST   | Create new course via modal form | ✅ Used        |
+| `GET /api/courses/{id}/`    | GET    | Fetch course details for editing | ✅ Available\* |
+| `PUT /api/courses/{id}/`    | PUT    | Update course via edit modal     | ✅ Used        |
+| `DELETE /api/courses/{id}/` | DELETE | Delete course with confirmation  | ✅ Used        |
 
 **Note**: `GET /api/courses/{id}/` is available in API service but not directly called since we pass the full course object when editing. Can be used for fetching fresh data if needed.
 
 ### **Student Side (`/student/home`)**
 
-| API Endpoint | Method | Usage | Status |
-|-------------|--------|-------|--------|
-| `GET /api/courses/` | GET | Display all courses in card view | ✅ Used |
+| API Endpoint        | Method | Usage                            | Status  |
+| ------------------- | ------ | -------------------------------- | ------- |
+| `GET /api/courses/` | GET    | Display all courses in card view | ✅ Used |
 
 ---
 
@@ -32,18 +32,18 @@ This document confirms that **ALL** provided APIs are now fully integrated and f
 
 ### **Admin Side (`/admin/courses` - Enrollments Tab)**
 
-| API Endpoint | Method | Usage | Status |
-|-------------|--------|-------|--------|
-| `GET /api/enrollments/` | GET | List all enrollments in table | ✅ Used |
-| `POST /api/enrollments/` | POST | Add student to course via modal | ✅ Used |
-| `PUT /api/enrollments/{id}/` | PUT | **UPDATE enrollment (grade, date)** | ✅ **NOW USED** |
-| `DELETE /api/enrollments/{id}/` | DELETE | Remove enrollment with confirmation | ✅ Used |
+| API Endpoint                    | Method | Usage                               | Status          |
+| ------------------------------- | ------ | ----------------------------------- | --------------- |
+| `GET /api/enrollments/`         | GET    | List all enrollments in table       | ✅ Used         |
+| `POST /api/enrollments/`        | POST   | Add student to course via modal     | ✅ Used         |
+| `PUT /api/enrollments/{id}/`    | PUT    | **UPDATE enrollment (grade, date)** | ✅ **NOW USED** |
+| `DELETE /api/enrollments/{id}/` | DELETE | Remove enrollment with confirmation | ✅ Used         |
 
 ### **Student Side (`/student/home`)**
 
-| API Endpoint | Method | Usage | Status |
-|-------------|--------|-------|--------|
-| `GET /api/enrollments/` | GET | Show enrolled courses with grades | ✅ Used |
+| API Endpoint            | Method | Usage                             | Status  |
+| ----------------------- | ------ | --------------------------------- | ------- |
+| `GET /api/enrollments/` | GET    | Show enrolled courses with grades | ✅ Used |
 
 ---
 
@@ -54,6 +54,7 @@ This document confirms that **ALL** provided APIs are now fully integrated and f
 **Location**: `/admin/courses` → Enrollments Tab
 
 **Features**:
+
 - ✏️ **Edit button** added to each enrollment row
 - **Modal form** for editing enrollment
 - **Update grade** for enrolled students
@@ -61,6 +62,7 @@ This document confirms that **ALL** provided APIs are now fully integrated and f
 - **Student and Course fields disabled** when editing (can't change core enrollment)
 
 **User Flow**:
+
 1. Admin clicks ✏️ edit button on enrollment
 2. Modal opens with current enrollment data
 3. Admin can modify:
@@ -71,6 +73,7 @@ This document confirms that **ALL** provided APIs are now fully integrated and f
 6. Uses `PUT /api/enrollments/{id}/` API
 
 **Code Implementation**:
+
 ```javascript
 // New state for editing enrollment
 const [editingEnrollment, setEditingEnrollment] = useState(null);
@@ -82,7 +85,8 @@ const handleEditEnrollment = (enrollment) => {
     student: enrollment.student,
     course: enrollment.course,
     grade: enrollment.grade || "",
-    enrollment_date: enrollment.enrollment_date || new Date().toISOString().split("T")[0],
+    enrollment_date:
+      enrollment.enrollment_date || new Date().toISOString().split("T")[0],
   });
   setShowEnrollmentModal(true);
 };
@@ -255,6 +259,7 @@ Actions Available:
 ```
 
 **Key Points**:
+
 - Student and Course fields are **disabled** when editing
 - This prevents changing the core enrollment relationship
 - Grade and Date are **editable** for updates
@@ -265,6 +270,7 @@ Actions Available:
 ## ✅ **Verification Checklist**
 
 ### **Courses APIs**
+
 - [x] GET all courses - Used in admin table & student home
 - [x] POST create course - Used in admin "Add Course" modal
 - [x] GET course by ID - Available in API service
@@ -272,6 +278,7 @@ Actions Available:
 - [x] DELETE course - Used in admin table delete button
 
 ### **Enrollments APIs**
+
 - [x] GET all enrollments - Used in admin table & student home
 - [x] POST create enrollment - Used in admin "Add Enrollment" modal
 - [x] PUT update enrollment - **NOW USED** in admin "Edit Enrollment" modal ⭐
@@ -284,15 +291,18 @@ Actions Available:
 ### **Test Course APIs**
 
 1. **GET /api/courses/**
+
    - Go to `/admin/courses`
    - Courses load automatically in table
 
 2. **POST /api/courses/**
+
    - Click "Add Course" button
    - Fill form: name, description, credits, instructor
    - Click "Add Course"
 
 3. **PUT /api/courses/{id}/**
+
    - Click ✏️ edit button on any course
    - Modify fields
    - Click "Update Course"
@@ -304,17 +314,20 @@ Actions Available:
 ### **Test Enrollment APIs**
 
 1. **GET /api/enrollments/**
+
    - Go to `/admin/courses`
    - Click "Enrollments" tab
    - Enrollments load automatically
 
 2. **POST /api/enrollments/**
+
    - Click "Add Enrollment" button
    - Select student and course
    - Optional: add grade
    - Click "Add Enrollment"
 
 3. **PUT /api/enrollments/{id}/** ⭐ NEW!
+
    - Click ✏️ edit button on any enrollment
    - Change grade (e.g., from "A" to "B+")
    - Change date
@@ -329,9 +342,11 @@ Actions Available:
 ## 📝 **Code Files Updated**
 
 1. **`src/services/api.js`**
+
    - All API endpoints defined ✅
 
 2. **`src/admin/pages/Courses.jsx`**
+
    - Added `editingEnrollment` state
    - Added `handleEditEnrollment()` function
    - Added `handleAddNewEnrollment()` function
@@ -354,10 +369,12 @@ Actions Available:
 ✅ 4 Enrollment APIs - All used (including UPDATE that was just added)
 
 **The application now provides complete CRUD functionality for:**
+
 - ✅ Courses (Create, Read, Update, Delete)
 - ✅ Enrollments (Create, Read, Update, Delete)
 
 **Admin can now:**
+
 - Manage all courses
 - Manage all enrollments
 - **Update student grades** ⭐
@@ -365,6 +382,7 @@ Actions Available:
 - Full control over course and enrollment data
 
 **Students can:**
+
 - View all available courses
 - See their enrolled courses
 - Check their grades

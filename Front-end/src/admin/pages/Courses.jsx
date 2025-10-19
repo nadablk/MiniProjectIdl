@@ -174,7 +174,8 @@ const Courses = () => {
       student: enrollment.student || "",
       course: enrollment.course || "",
       grade: enrollment.grade || "",
-      enrollment_date: enrollment.enrollment_date || new Date().toISOString().split("T")[0],
+      enrollment_date:
+        enrollment.enrollment_date || new Date().toISOString().split("T")[0],
     });
     setShowEnrollmentModal(true);
   };
@@ -516,7 +517,9 @@ const Courses = () => {
         <div className="modal-overlay" onClick={handleCloseEnrollmentModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>{editingEnrollment ? "Edit Enrollment" : "Add Enrollment"}</h2>
+              <h2>
+                {editingEnrollment ? "Edit Enrollment" : "Add Enrollment"}
+              </h2>
               <button
                 className="close-btn"
                 onClick={handleCloseEnrollmentModal}
