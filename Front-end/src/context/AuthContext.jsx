@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
         email: "student@philo.com",
         password: "azerty",
         role: "student",
-        name: "Jean Dupont",
-        studentId: "12345",
+        name: "philo std",
+        studentId: "1",
       },
     ];
 

@@ -11,7 +11,9 @@ import AdminLayout from "./admin/AdminLayout";
 import Dashboard from "./admin/pages/dashboard";
 import Students from "./admin/pages/Students";
 import Universities from "./admin/pages/Universities";
+import Courses from "./admin/pages/Courses";
 import Home from "./pages/home";
+import CoursesStudent from "./pages/CoursesStudent";
 import "./App.css";
 
 function App() {
@@ -35,14 +37,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="students" element={<Students />} />
             <Route path="universities" element={<Universities />} />
-            <Route
-              path="courses"
-              element={
-                <div style={{ padding: "2rem", color: "#603B28" }}>
-                  Page Cours - En construction
-                </div>
-              }
-            />
+            <Route path="courses" element={<Courses />} />
           </Route>
 
           {/* Student Routes */}
@@ -51,6 +46,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["student"]}>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/courses"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <CoursesStudent />
               </ProtectedRoute>
             }
           />

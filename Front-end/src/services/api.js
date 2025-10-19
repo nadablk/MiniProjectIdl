@@ -136,3 +136,98 @@ export const universityAPI = {
     return response.json();
   },
 };
+
+// Course API (Django Backend)
+export const courseAPI = {
+  // Get all courses
+  getAllCourses: async () => {
+    const response = await fetch(`${API_BASE_URL}/courses/`);
+    if (!response.ok) throw new Error("Failed to fetch courses");
+    return response.json();
+  },
+
+  // Get course by ID
+  getCourseById: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/courses/${id}/`);
+    if (!response.ok) throw new Error("Failed to fetch course");
+    return response.json();
+  },
+
+  // Create course
+  createCourse: async (course) => {
+    const response = await fetch(`${API_BASE_URL}/courses/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(course),
+    });
+    if (!response.ok) throw new Error("Failed to create course");
+    return response.json();
+  },
+
+  // Update course
+  updateCourse: async (id, course) => {
+    const response = await fetch(`${API_BASE_URL}/courses/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(course),
+    });
+    if (!response.ok) throw new Error("Failed to update course");
+    return response.json();
+  },
+
+  // Delete course
+  deleteCourse: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/courses/${id}/`, {
+      method: "DELETE",
+    });
+    if (!response.ok) throw new Error("Failed to delete course");
+  },
+};
+
+// Enrollment API (Django Backend)
+export const enrollmentAPI = {
+  // Get all enrollments
+  getAllEnrollments: async () => {
+    const response = await fetch(`${API_BASE_URL}/enrollments/`);
+    if (!response.ok) throw new Error("Failed to fetch enrollments");
+    return response.json();
+  },
+
+  // Create enrollment
+  createEnrollment: async (enrollment) => {
+    const response = await fetch(`${API_BASE_URL}/enrollments/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(enrollment),
+    });
+    if (!response.ok) throw new Error("Failed to create enrollment");
+    return response.json();
+  },
+
+  // Update enrollment
+  updateEnrollment: async (id, enrollment) => {
+    const response = await fetch(`${API_BASE_URL}/enrollments/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(enrollment),
+    });
+    if (!response.ok) throw new Error("Failed to update enrollment");
+    return response.json();
+  },
+
+  // Delete enrollment
+  deleteEnrollment: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/enrollments/${id}/`, {
+      method: "DELETE",
+    });
+    if (!response.ok) throw new Error("Failed to delete enrollment");
+  },
+};
