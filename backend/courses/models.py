@@ -4,19 +4,49 @@ from django.utils import timezone
 
 
 class Course(models.Model):
-    
+  
     CATEGORY_CHOICES = [
         ('CS', 'Computer Science'),
         ('MATH', 'Mathematics'),
         ('PHYSICS', 'Physics'),
+        ('CHEMISTRY', 'Chemistry'),
+        ('BIOLOGY', 'Biology'),
+        ('ENGINEERING', 'Engineering'),
+        ('BUSINESS', 'Business'),
+        ('ARTS', 'Arts'),
         ('OTHER', 'Other'),
     ]
 
-    name = models.CharField( max_length=200,verbose_name="Course Name")
-    instructor = models.CharField( max_length=150, verbose_name="Instructor Name")
-    category = models.CharField(max_length=20,choices=CATEGORY_CHOICES,default='OTHER',verbose_name="Course Category")
-    schedule = models.CharField(max_length=200,verbose_name="Course Schedule",blank=True,null=True)
-    description = models.TextField(blank=True,null=True,verbose_name="Course Description")
+    name = models.CharField(
+        max_length=200,
+        verbose_name="Course Name"
+    )
+    
+    instructor = models.CharField(
+        max_length=150,
+        verbose_name="Instructor Name"
+    )
+    
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='OTHER',
+        verbose_name="Course Category"
+    )
+    
+    schedule = models.CharField(
+        max_length=200,
+        verbose_name="Course Schedule",
+        blank=True,
+        null=True
+    )
+    
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Course Description"
+    )
+    
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Created At"
@@ -26,28 +56,24 @@ class Course(models.Model):
         auto_now=True,
         verbose_name="Updated At"
     )
+
     class Meta:
         db_table = 'courses'
         verbose_name = 'Course'
         verbose_name_plural = 'Courses'
-        indexes = [
-            models.Index(fields=['name']),
-            models.Index(fields=['category']),
-            models.Index(fields=['instructor']),
-        ]
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.name} - {self.instructor}"
 
     @property
     def enrolled_students_count(self):
-        
+       
         return self.studentcourse_set.count()
-    
 
 
 class StudentCourse(models.Model):
-    
+   
     STATUS_CHOICES = [
         ('ENROLLED', 'Enrolled'),
         ('COMPLETED', 'Completed'),
@@ -55,12 +81,55 @@ class StudentCourse(models.Model):
         ('FAILED', 'Failed'),
     ]
 
-    # student_id est un entier qui fait référence à un étudiant dans le Student Service
-    # On ne peut pas utiliser ForeignKey car l'étudiant est dans un autre microservice
-    student_id = models.IntegerField(verbose_name="Student ID")
-    course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='enrollments',verbose_name="Course")
-    enrollment_date = models.DateTimeField(default=timezone.now,verbose_name="Enrollment Date")
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='ENROLLED',verbose_name="Enrollment Status")
+   
+    student_id = models.IntegerField(
+        verbose_name="Student ID",
+        help_text="ID of the student from Student Service"
+    )
+    
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='enrollments',
+        verbose_name="Course"
+    )
+    
+    enrollment_date = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Enrollment Date"
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='ENROLLED',
+        verbose_name="Enrollment Status"
+    )
+    
+    grade = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        verbose_name="Grade",
+        help_text="Grade out of 20"
+    )
+    
+    attendance_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name="Attendance Percentage"
+    )
+    
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Additional Notes"
+    )
     
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -87,4 +156,26 @@ class StudentCourse(models.Model):
     def __str__(self):
         return f"Student {self.student_id} - {self.course.name} ({self.status})"
 
-   
+    @property
+    def is_passing(self):
+        """
+        Vérifie si l'étudiant a la moyenne (>= 10/20)
+        """
+        if self.grade is None:
+            return None
+        return self.grade >= 10
+
+    def complete_course(self, final_grade):
+        """
+        Méthode pour marquer le cours comme complété avec une note finale
+        """
+        self.grade = final_grade
+        self.status = 'COMPLETED' if final_grade >= 10 else 'FAILED'
+        self.save()
+
+    def drop_course(self):
+        """
+        Méthode pour abandonner le cours
+        """
+        self.status = 'DROPPED'
+        self.save()
