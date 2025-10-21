@@ -143,15 +143,29 @@ const Courses = () => {
   const handleEnrollmentSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Extract IDs from objects if they exist
+      const enrollmentData = {
+        student:
+          typeof enrollmentFormData.student === "object"
+            ? enrollmentFormData.student.id
+            : parseInt(enrollmentFormData.student),
+        course:
+          typeof enrollmentFormData.course === "object"
+            ? enrollmentFormData.course.id
+            : parseInt(enrollmentFormData.course),
+        grade: enrollmentFormData.grade || "",
+        enrollment_date: enrollmentFormData.enrollment_date,
+      };
+
       if (editingEnrollment) {
         // Update existing enrollment
         await enrollmentAPI.updateEnrollment(
           editingEnrollment.id,
-          enrollmentFormData
+          enrollmentData
         );
       } else {
         // Create new enrollment
-        await enrollmentAPI.createEnrollment(enrollmentFormData);
+        await enrollmentAPI.createEnrollment(enrollmentData);
       }
       setShowEnrollmentModal(false);
       setEnrollmentFormData({
