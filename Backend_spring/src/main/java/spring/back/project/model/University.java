@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
-@Entity
+@Entity 
 @Table(name = "universities")
 public class University {
     

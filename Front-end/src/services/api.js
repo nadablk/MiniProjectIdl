@@ -1,11 +1,10 @@
 // Spring Boot Backend (Students & Universities) - Port 8081
-const DJANGO_API_BASE_URL = "http://localhost:8081/api"; 
-
+const DJANGO_API_BASE_URL = "http://10.65.251.225:8081/api";
 
 // Django Backend (Courses & Enrollments) - Port 8081 (on different device)
 // Change this to the actual IP address of the Django server machine
 // Replace with actual Django server IP
-const SPRING_API_BASE_URL = "http://192.168.1.100:8081/api";
+const SPRING_API_BASE_URL = "http://localhost:8081/api";
 // Student API (Spring Boot)
 export const studentAPI = {
   // Get all students
@@ -208,6 +207,7 @@ export const enrollmentAPI = {
 
   // Create enrollment
   createEnrollment: async (enrollment) => {
+    console.log("Creating enrollment with data:", enrollment);
     const response = await fetch(`${DJANGO_API_BASE_URL}/enrollments/`, {
       method: "POST",
       headers: {
@@ -215,7 +215,13 @@ export const enrollmentAPI = {
       },
       body: JSON.stringify(enrollment),
     });
-    if (!response.ok) throw new Error("Failed to create enrollment");
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("Server error response:", errorData);
+      throw new Error(
+        `Failed to create enrollment: ${JSON.stringify(errorData)}`
+      );
+    }
     return response.json();
   },
 

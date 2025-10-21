@@ -157,6 +157,8 @@ const Courses = () => {
         enrollment_date: enrollmentFormData.enrollment_date,
       };
 
+      console.log("Submitting enrollment data:", enrollmentData);
+
       if (editingEnrollment) {
         // Update existing enrollment
         await enrollmentAPI.updateEnrollment(
@@ -178,7 +180,7 @@ const Courses = () => {
       fetchEnrollments();
     } catch (err) {
       console.error("Error saving enrollment:", err);
-      alert("Failed to save enrollment");
+      alert(`Failed to save enrollment: ${err.message}`);
     }
   };
 
