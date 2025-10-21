@@ -5,7 +5,7 @@ const DJANGO_API_BASE_URL = "http://localhost:8081/api";
 // Django Backend (Courses & Enrollments) - Port 8081 (on different device)
 // Change this to the actual IP address of the Django server machine
 // Replace with actual Django server IP
-const SPRING_API_BASE_URL = "http://192.168.1.100:8081/api";
+const SPRING_API_BASE_URL = "http://10.40.112.4:8081/api";
 // Student API (Spring Boot)
 export const studentAPI = {
   // Get all students

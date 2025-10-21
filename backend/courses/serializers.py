@@ -19,7 +19,7 @@ class StudentCourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at']
     
     def create(self, validated_data):
-        # Set default status and other required fields
+        
         validated_data['status'] = 'ENROLLED'
         if 'grade' not in validated_data or not validated_data['grade']:
             validated_data['grade'] = None
