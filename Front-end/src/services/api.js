@@ -1,9 +1,10 @@
-// Spring Boot Backend (Your Device)
-const SPRING_API_BASE_URL = "http://springboot.myappstore.live:8081/api";
+// Spring Boot Backend (Students & Universities) - Port 8081
+const DJANGO_API_BASE_URL = "http://10.65.251.225:8081/api";
 
-// Django Backend (Teammate's Device)
-const DJANGO_API_BASE_URL = "http://django.myappstore.live:8081/api";
-
+// Django Backend (Courses & Enrollments) - Port 8081 (on different device)
+// Change this to the actual IP address of the Django server machine
+// Replace with actual Django server IP
+const SPRING_API_BASE_URL = "http://localhost:8081/api";
 // Student API (Spring Boot)
 export const studentAPI = {
   // Get all students

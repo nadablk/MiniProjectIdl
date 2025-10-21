@@ -25,12 +25,7 @@ SECRET_KEY = 'django-insecure-%v@yqcl8+p-wpq)#%&=9$$i&5(biho5czsu6y4cft+-aysiybh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'django.myappstore.live',
-    'app.myappstore.live',
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -59,16 +54,8 @@ MIDDLEWARE = [
 ]
 # Add these CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://app.myappstore.live",
-    "https://app.myappstore.live",
-    "http://app.myappstore.live:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-]
-
-# Allow all subdomains of myappstore.live
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https?://.*\.myappstore\.live$",
 ]
 
 CORS_ALLOW_METHODS = [
