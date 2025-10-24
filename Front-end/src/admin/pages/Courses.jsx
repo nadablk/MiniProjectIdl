@@ -145,7 +145,7 @@ const Courses = () => {
     try {
       // Extract IDs from objects if they exist
       const enrollmentData = {
-        student:
+        student_id:
           typeof enrollmentFormData.student === "object"
             ? enrollmentFormData.student.id
             : parseInt(enrollmentFormData.student),
@@ -243,13 +243,25 @@ const Courses = () => {
     });
   };
 
-  const getStudentName = (studentId) => {
-    const student = students.find((s) => s.id === studentId);
-    return student ? `${student.firstName} ${student.lastName}` : "Unknown";
+  const getStudentName = (enrollment) => {
+    // First try to find student in the students array from Spring Boot
+    const student = students.find((s) => s.id === enrollment.student_id);
+    if (student) {
+      return `${student.firstName} ${student.lastName}`;
+    }
+    // Fallback to backend's student_name if student not found
+    if (enrollment.student_name) {
+      return enrollment.student_name;
+    }
+    return "Unknown";
   };
 
-  const getCourseName = (courseId) => {
-    const course = courses.find((c) => c.id === courseId);
+  const getCourseName = (enrollment) => {
+    // Use course_name from backend if available, otherwise fallback to finding in courses array
+    if (enrollment.course_name) {
+      return enrollment.course_name;
+    }
+    const course = courses.find((c) => c.id === enrollment.course);
     return course ? course.name : "Unknown";
   };
 
@@ -258,8 +270,8 @@ const Courses = () => {
   );
 
   const filteredEnrollments = enrollments.filter((enrollment) => {
-    const studentName = getStudentName(enrollment.student);
-    const courseName = getCourseName(enrollment.course);
+    const studentName = getStudentName(enrollment);
+    const courseName = getCourseName(enrollment);
     return (
       studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       courseName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -414,10 +426,10 @@ const Courses = () => {
                     <td>
                       <div className="student-name">
                         <span className="avatar">👤</span>
-                        {getStudentName(enrollment.student)}
+                        {getStudentName(enrollment)}
                       </div>
                     </td>
-                    <td>{getCourseName(enrollment.course)}</td>
+                    <td>{getCourseName(enrollment)}</td>
                     <td>
                       <span className="grade-badge">
                         {enrollment.grade || "Not graded"}
