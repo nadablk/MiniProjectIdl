@@ -1,0 +1,81 @@
+# Student Type
+type Student {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  fullName: String!
+  university: University
+}
+
+# University Type
+type University {
+  id: ID!
+  name: String!
+  location: String!
+  students: [Student]
+}
+
+# Input Types for Mutations
+input StudentInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  universityId: ID
+}
+
+input StudentUpdateInput {
+  firstName: String
+  lastName: String
+  email: String
+  universityId: ID
+}
+
+input UniversityInput {
+  name: String!
+  location: String!
+}
+
+input UniversityUpdateInput {
+  name: String
+  location: String
+}
+
+# Query Operations (Read)
+type Query {
+  # Student Queries
+  students: [Student]
+  student(id: ID!): Student
+  studentsByUniversity(universityId: ID!): [Student]
+  searchStudents(query: String!): [Student]
+  studentStats: StudentStats
+
+  # University Queries
+  universities: [University]
+  university(id: ID!): University
+  searchUniversities(name: String!): [University]
+}
+
+# Mutation Operations (Create, Update, Delete)
+type Mutation {
+  # Student Mutations
+  createStudent(input: StudentInput!): Student
+  updateStudent(id: ID!, input: StudentUpdateInput!): Student
+  deleteStudent(id: ID!): Boolean
+
+  # University Mutations
+  createUniversity(input: UniversityInput!): University
+  updateUniversity(id: ID!, input: UniversityUpdateInput!): University
+  deleteUniversity(id: ID!): Boolean
+}
+
+# Statistics Type
+type StudentStats {
+  totalStudents: Int!
+  studentsPerUniversity: [UniversityStudentCount]
+}
+
+type UniversityStudentCount {
+  universityName: String!
+  studentCount: Int!
+}
