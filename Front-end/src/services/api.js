@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // ===================================================================
 // API GATEWAY CONFIGURATION
 // ===================================================================
@@ -13,6 +14,10 @@
 // - /api/courses/**      → Django (192.168.117.225:9090)
 // - /api/enrollments/**  → Django (192.168.117.225:9090)
 // ===================================================================
+=======
+// Spring Boot Backend (Students & Universities) - Port 8081
+const DJANGO_API_BASE_URL = "http://localhost:9090/api";
+>>>>>>> 187be14004ad7e8047f6dbf22c7c8f4dfa9325f4
 
 // OLD (Direct Backend Access):
 // const SPRING_API_BASE_URL = "http://localhost:8081/api";

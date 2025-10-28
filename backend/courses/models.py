@@ -187,3 +187,8 @@ class StudentCourse(models.Model):
         """
         self.status = 'DROPPED'
         self.save()
+
+class Enrollment(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    student_id = models.IntegerField()  # Reference to student in other DB
+    enrolled_at = models.DateTimeField(auto_now_add=True)    
