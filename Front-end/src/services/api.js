@@ -1,10 +1,5 @@
 // Spring Boot Backend (Students & Universities) - Port 8081
-
- //const DJANGO_API_BASE_URL = "http://10.65.251.225:8081/api";
-const DJANGO_API_BASE_URL = "http://localhost:9090/api";
-
-//const DJANGO_API_BASE_URL = "http://10.65.251.225:8081/api";
-
+const DJANGO_API_BASE_URL = "http://192.168.117.225:9090/api";
 
 // Django Backend (Courses & Enrollments) - Port 8081 (on different device)
 // Change this to the actual IP address of the Django server machine

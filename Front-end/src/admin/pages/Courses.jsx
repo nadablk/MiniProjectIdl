@@ -78,10 +78,18 @@ const Courses = () => {
   const handleCourseSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Prepare data with proper types
+      const courseData = {
+        name: courseFormData.name,
+        description: courseFormData.description || "",
+        credits: parseInt(courseFormData.credits) || 3, // Convert to integer, default to 3
+        instructor: courseFormData.instructor || "",
+      };
+
       if (editingCourse) {
-        await courseAPI.updateCourse(editingCourse.id, courseFormData);
+        await courseAPI.updateCourse(editingCourse.id, courseData);
       } else {
-        await courseAPI.createCourse(courseFormData);
+        await courseAPI.createCourse(courseData);
       }
       setShowCourseModal(false);
       setCourseFormData({
