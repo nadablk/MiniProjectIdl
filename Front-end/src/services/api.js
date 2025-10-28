@@ -5,6 +5,7 @@ const DJANGO_API_BASE_URL = "http://192.168.117.225:9090/api";
 // Change this to the actual IP address of the Django server machine
 // Replace with actual Django server IP
 const SPRING_API_BASE_URL = "http://localhost:8081/api";
+//const SPRING_API_BASE_URL = "http://192.168.117.159/api";
 // Student API (Spring Boot)
 export const studentAPI = {
   // Get all students
