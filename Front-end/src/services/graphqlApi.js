@@ -1,22 +1,30 @@
 // ===================================================================
 // GraphQL API - Now using API Gateway
 // ===================================================================
-// GraphQL endpoint now routes through the API Gateway
-// Gateway forwards /graphql/** to Spring Boot automatically
+// GraphQL endpoints now route through the API Gateway
+// Gateway forwards /graphql/spring/** to Spring Boot (port 8081)
+// Gateway forwards /graphql/django/** to Django (port 9090)
+//
+// 🔧 TO CHANGE NETWORK IP: Edit /src/config/apiConfig.js
 // ===================================================================
 
-// OLD: const GRAPHQL_ENDPOINT = "http://localhost:8081/graphql";
-// NEW: Use Gateway
-const GRAPHQL_ENDPOINT = "http://192.168.117.225:8080/graphql";
+import { API_CONFIG } from "../config/apiConfig.js";
+
+// Spring Boot GraphQL endpoint (Students & Universities)
+const SPRING_GRAPHQL_ENDPOINT = API_CONFIG.SPRING_GRAPHQL;
+
+// Django GraphQL endpoint (Courses & Enrollments)
+const DJANGO_GRAPHQL_ENDPOINT = API_CONFIG.DJANGO_GRAPHQL;
 
 /**
  * Generic GraphQL request function
+ * @param {string} endpoint - GraphQL endpoint URL
  * @param {string} query - GraphQL query or mutation
  * @param {object} variables - Variables for the query (optional)
  * @returns {Promise} - Response data
  */
-const graphqlRequest = async (query, variables = {}) => {
-  const response = await fetch(GRAPHQL_ENDPOINT, {
+const graphqlRequest = async (endpoint, query, variables = {}) => {
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -64,7 +72,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query);
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
     return data.students;
   },
 
@@ -90,7 +98,9 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query, { id: id.toString() });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+      id: id.toString(),
+    });
     return data.student;
   },
 
@@ -115,7 +125,9 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query, { query: searchQuery });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+      query: searchQuery,
+    });
     return data.searchStudents;
   },
 
@@ -136,7 +148,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query, {
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
       universityId: universityId.toString(),
     });
     return data.studentsByUniversity;
@@ -154,7 +166,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query);
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
     return data.studentStats;
   },
 
@@ -185,7 +197,9 @@ export const studentGraphQL = {
       universityId:
         student.university?.id?.toString() || student.universityId?.toString(),
     };
-    const data = await graphqlRequest(mutation, { input });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+      input,
+    });
     return data.createStudent;
   },
 
@@ -220,7 +234,10 @@ export const studentGraphQL = {
       ).toString();
     }
 
-    const data = await graphqlRequest(mutation, { id: id.toString(), input });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+      id: id.toString(),
+      input,
+    });
     return data.updateStudent;
   },
 
@@ -235,7 +252,9 @@ export const studentGraphQL = {
         deleteStudent(id: $id)
       }
     `;
-    const data = await graphqlRequest(mutation, { id: id.toString() });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+      id: id.toString(),
+    });
     return data.deleteStudent;
   },
 };
@@ -262,7 +281,7 @@ export const universityGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query);
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
     return data.universities;
   },
 
@@ -287,7 +306,9 @@ export const universityGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query, { id: id.toString() });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+      id: id.toString(),
+    });
     return data.university;
   },
 
@@ -306,7 +327,7 @@ export const universityGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(query, { name });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, { name });
     return data.searchUniversities;
   },
 
@@ -329,7 +350,9 @@ export const universityGraphQL = {
       name: university.name,
       location: university.location,
     };
-    const data = await graphqlRequest(mutation, { input });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+      input,
+    });
     return data.createUniversity;
   },
 
@@ -353,7 +376,10 @@ export const universityGraphQL = {
     if (university.name) input.name = university.name;
     if (university.location) input.location = university.location;
 
-    const data = await graphqlRequest(mutation, { id: id.toString(), input });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+      id: id.toString(),
+      input,
+    });
     return data.updateUniversity;
   },
 
@@ -368,7 +394,9 @@ export const universityGraphQL = {
         deleteUniversity(id: $id)
       }
     `;
-    const data = await graphqlRequest(mutation, { id: id.toString() });
+    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+      id: id.toString(),
+    });
     return data.deleteUniversity;
   },
 };
@@ -400,7 +428,7 @@ export const getDashboardData = async () => {
       }
     }
   `;
-  const data = await graphqlRequest(query);
+  const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
   return data;
 };
 
@@ -430,6 +458,271 @@ export const getStudentWithUniversity = async (id) => {
       }
     }
   `;
-  const data = await graphqlRequest(query, { id: id.toString() });
+  const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+    id: id.toString(),
+  });
   return data.student;
+};
+
+// ==================== COURSE QUERIES (Django GraphQL) ====================
+
+export const courseGraphQL = {
+  /**
+   * Get all courses
+   * @returns {Promise<Array>} List of courses
+   */
+  getAllCourses: async () => {
+    const query = `
+      query {
+        allCourses {
+          id
+          name
+          description
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query);
+    return data.allCourses;
+  },
+
+  /**
+   * Get course by ID
+   * @param {number} id - Course ID
+   * @returns {Promise<Object>} Course object
+   */
+  getCourseById: async (id) => {
+    const query = `
+      query GetCourse($id: Int!) {
+        course(id: $id) {
+          id
+          name
+          description
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, {
+      id: parseInt(id),
+    });
+    return data.course;
+  },
+
+  /**
+   * Get course by name
+   * @param {string} name - Course name
+   * @returns {Promise<Object>} Course object
+   */
+  getCourseByName: async (name) => {
+    const query = `
+      query GetCourseByName($name: String!) {
+        courseByName(name: $name) {
+          id
+          name
+          description
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, { name });
+    return data.courseByName;
+  },
+
+  /**
+   * Create a new course
+   * @param {Object} course - Course data {name, description}
+   * @returns {Promise<Object>} Created course
+   */
+  createCourse: async (course) => {
+    const mutation = `
+      mutation CreateCourse($name: String!, $description: String) {
+        createCourse(name: $name, description: $description) {
+          success
+          message
+          course {
+            id
+            name
+            description
+          }
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+      name: course.name,
+      description: course.description || null,
+    });
+    return data.createCourse;
+  },
+
+  /**
+   * Update a course
+   * @param {number} id - Course ID
+   * @param {Object} course - Updated course data
+   * @returns {Promise<Object>} Updated course
+   */
+  updateCourse: async (id, course) => {
+    const mutation = `
+      mutation UpdateCourse($id: Int!, $name: String, $description: String) {
+        updateCourse(id: $id, name: $name, description: $description) {
+          success
+          message
+          course {
+            id
+            name
+            description
+          }
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+      id: parseInt(id),
+      name: course.name || null,
+      description: course.description || null,
+    });
+    return data.updateCourse;
+  },
+
+  /**
+   * Delete a course
+   * @param {number} id - Course ID
+   * @returns {Promise<Object>} Delete result
+   */
+  deleteCourse: async (id) => {
+    const mutation = `
+      mutation DeleteCourse($id: Int!) {
+        deleteCourse(id: $id) {
+          success
+          message
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+      id: parseInt(id),
+    });
+    return data.deleteCourse;
+  },
+};
+
+// ==================== ENROLLMENT QUERIES (Django GraphQL) ====================
+
+export const enrollmentGraphQL = {
+  /**
+   * Get all enrollments
+   * @returns {Promise<Array>} List of enrollments
+   */
+  getAllEnrollments: async () => {
+    const query = `
+      query {
+        allEnrollments {
+          id
+          studentId
+          course {
+            id
+            name
+            description
+          }
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query);
+    return data.allEnrollments;
+  },
+
+  /**
+   * Get enrollments by course ID
+   * @param {number} courseId - Course ID
+   * @returns {Promise<Array>} List of enrollments for that course
+   */
+  getEnrollmentsByCourse: async (courseId) => {
+    const query = `
+      query GetEnrollmentsByCourse($courseId: Int!) {
+        enrollmentsByCourse(courseId: $courseId) {
+          id
+          studentId
+          course {
+            id
+            name
+          }
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, {
+      courseId: parseInt(courseId),
+    });
+    return data.enrollmentsByCourse;
+  },
+
+  /**
+   * Get enrollments by student ID
+   * @param {number} studentId - Student ID
+   * @returns {Promise<Array>} List of enrollments for that student
+   */
+  getEnrollmentsByStudent: async (studentId) => {
+    const query = `
+      query GetEnrollmentsByStudent($studentId: Int!) {
+        enrollmentsByStudent(studentId: $studentId) {
+          id
+          studentId
+          course {
+            id
+            name
+            description
+          }
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, {
+      studentId: parseInt(studentId),
+    });
+    return data.enrollmentsByStudent;
+  },
+
+  /**
+   * Add a student to a course (create enrollment)
+   * @param {number} studentId - Student ID
+   * @param {number} courseId - Course ID
+   * @returns {Promise<Object>} Enrollment result
+   */
+  addStudentToCourse: async (studentId, courseId) => {
+    const mutation = `
+      mutation AddStudentToCourse($studentId: Int!, $courseId: Int!) {
+        addStudentToCourse(studentId: $studentId, courseId: $courseId) {
+          success
+          message
+          enrollment {
+            id
+            studentId
+            course {
+              id
+              name
+            }
+          }
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+      studentId: parseInt(studentId),
+      courseId: parseInt(courseId),
+    });
+    return data.addStudentToCourse;
+  },
+
+  /**
+   * Remove a student from a course (delete enrollment)
+   * @param {number} studentId - Student ID
+   * @param {number} courseId - Course ID
+   * @returns {Promise<Object>} Delete result
+   */
+  removeStudentFromCourse: async (studentId, courseId) => {
+    const mutation = `
+      mutation RemoveStudentFromCourse($studentId: Int!, $courseId: Int!) {
+        removeStudentFromCourse(studentId: $studentId, courseId: $courseId) {
+          success
+          message
+        }
+      }
+    `;
+    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+      studentId: parseInt(studentId),
+      courseId: parseInt(courseId),
+    });
+    return data.removeStudentFromCourse;
+  },
 };

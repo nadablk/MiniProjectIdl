@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { courseAPI, enrollmentAPI } from "../services/api";
+import { courseGraphQL, enrollmentGraphQL } from "../services/graphqlApi";
 import "../style/CoursesStudent.css";
 
 const Courses = () => {
@@ -18,7 +18,7 @@ const Courses = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const data = await courseAPI.getAllCourses();
+      const data = await courseGraphQL.getAllCourses();
       setCourses(data);
       setError(null);
     } catch (err) {
@@ -31,7 +31,7 @@ const Courses = () => {
 
   const fetchEnrollments = async () => {
     try {
-      const data = await enrollmentAPI.getAllEnrollments();
+      const data = await enrollmentGraphQL.getAllEnrollments();
       setEnrollments(data);
     } catch (err) {
       console.error("Error fetching enrollments:", err);

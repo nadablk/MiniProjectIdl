@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { courseAPI, enrollmentAPI } from "../services/api";
+import { courseGraphQL, enrollmentGraphQL } from "../services/graphqlApi";
 import "../style/home.css";
 
 const Home = () => {
@@ -21,7 +21,7 @@ const Home = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const data = await courseAPI.getAllCourses();
+      const data = await courseGraphQL.getAllCourses();
       setCourses(data);
     } catch (err) {
       console.error("Error fetching courses:", err);
@@ -32,7 +32,7 @@ const Home = () => {
 
   const fetchEnrollments = async () => {
     try {
-      const data = await enrollmentAPI.getAllEnrollments();
+      const data = await enrollmentGraphQL.getAllEnrollments();
       setEnrollments(data);
     } catch (err) {
       console.error("Error fetching enrollments:", err);

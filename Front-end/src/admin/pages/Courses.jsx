@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { courseAPI, enrollmentAPI, studentAPI } from "../../services/api";
+import {
+  courseGraphQL,
+  enrollmentGraphQL,
+  studentGraphQL,
+} from "../../services/graphqlApi";
 import "../style/Courses.css";
 
 const Courses = () => {
@@ -40,7 +44,7 @@ const Courses = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const data = await courseAPI.getAllCourses();
+      const data = await courseGraphQL.getAllCourses();
       setCourses(data);
       setError(null);
     } catch (err) {
@@ -53,7 +57,7 @@ const Courses = () => {
 
   const fetchEnrollments = async () => {
     try {
-      const data = await enrollmentAPI.getAllEnrollments();
+      const data = await enrollmentGraphQL.getAllEnrollments();
       setEnrollments(data);
     } catch (err) {
       console.error("Error fetching enrollments:", err);
@@ -62,7 +66,7 @@ const Courses = () => {
 
   const fetchStudents = async () => {
     try {
-      const data = await studentAPI.getAllStudents();
+      const data = await studentGraphQL.getAllStudents();
       setStudents(data);
     } catch (err) {
       console.error("Error fetching students:", err);
@@ -78,18 +82,25 @@ const Courses = () => {
   const handleCourseSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare data with proper types
+      // Prepare data
       const courseData = {
         name: courseFormData.name,
         description: courseFormData.description || "",
-        credits: parseInt(courseFormData.credits) || 3, // Convert to integer, default to 3
-        instructor: courseFormData.instructor || "",
       };
 
       if (editingCourse) {
-        await courseAPI.updateCourse(editingCourse.id, courseData);
+        const result = await courseGraphQL.updateCourse(
+          editingCourse.id,
+          courseData
+        );
+        if (!result.success) {
+          throw new Error(result.message || "Failed to update course");
+        }
       } else {
-        await courseAPI.createCourse(courseData);
+        const result = await courseGraphQL.createCourse(courseData);
+        if (!result.success) {
+          throw new Error(result.message || "Failed to create course");
+        }
       }
       setShowCourseModal(false);
       setCourseFormData({
@@ -102,7 +113,7 @@ const Courses = () => {
       fetchCourses();
     } catch (err) {
       console.error("Error saving course:", err);
-      alert("Failed to save course");
+      alert("Failed to save course: " + err.message);
     }
   };
 
@@ -134,11 +145,14 @@ const Courses = () => {
     }
 
     try {
-      await courseAPI.deleteCourse(id);
+      const result = await courseGraphQL.deleteCourse(id);
+      if (!result.success) {
+        throw new Error(result.message || "Failed to delete course");
+      }
       fetchCourses();
     } catch (err) {
       console.error("Error deleting course:", err);
-      alert("Failed to delete course");
+      alert("Failed to delete course: " + err.message);
     }
   };
 
@@ -151,31 +165,35 @@ const Courses = () => {
   const handleEnrollmentSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Extract IDs from objects if they exist
-      const enrollmentData = {
-        student_id:
-          typeof enrollmentFormData.student === "object"
-            ? enrollmentFormData.student.id
-            : parseInt(enrollmentFormData.student),
-        course:
-          typeof enrollmentFormData.course === "object"
-            ? enrollmentFormData.course.id
-            : parseInt(enrollmentFormData.course),
-        grade: enrollmentFormData.grade || "",
-        enrollment_date: enrollmentFormData.enrollment_date,
-      };
+      // Extract IDs
+      const studentId =
+        typeof enrollmentFormData.student === "object"
+          ? enrollmentFormData.student.id
+          : parseInt(enrollmentFormData.student);
 
-      console.log("Submitting enrollment data:", enrollmentData);
+      const courseId =
+        typeof enrollmentFormData.course === "object"
+          ? enrollmentFormData.course.id
+          : parseInt(enrollmentFormData.course);
+
+      console.log("Submitting enrollment:", { studentId, courseId });
 
       if (editingEnrollment) {
-        // Update existing enrollment
-        await enrollmentAPI.updateEnrollment(
-          editingEnrollment.id,
-          enrollmentData
+        // For now, GraphQL doesn't support updating enrollments
+        // You would need to remove and re-add
+        alert(
+          "Editing enrollments is not supported. Please delete and create a new one."
         );
+        return;
       } else {
         // Create new enrollment
-        await enrollmentAPI.createEnrollment(enrollmentData);
+        const result = await enrollmentGraphQL.addStudentToCourse(
+          studentId,
+          courseId
+        );
+        if (!result.success) {
+          throw new Error(result.message || "Failed to create enrollment");
+        }
       }
       setShowEnrollmentModal(false);
       setEnrollmentFormData({
@@ -221,11 +239,26 @@ const Courses = () => {
     }
 
     try {
-      await enrollmentAPI.deleteEnrollment(id);
+      // Find the enrollment to get student_id and course_id
+      const enrollment = enrollments.find((e) => e.id === id);
+      if (!enrollment) {
+        throw new Error("Enrollment not found");
+      }
+
+      const studentId = enrollment.studentId;
+      const courseId = enrollment.course?.id || enrollment.course;
+
+      const result = await enrollmentGraphQL.removeStudentFromCourse(
+        studentId,
+        courseId
+      );
+      if (!result.success) {
+        throw new Error(result.message || "Failed to delete enrollment");
+      }
       fetchEnrollments();
     } catch (err) {
       console.error("Error deleting enrollment:", err);
-      alert("Failed to delete enrollment");
+      alert("Failed to delete enrollment: " + err.message);
     }
   };
 
