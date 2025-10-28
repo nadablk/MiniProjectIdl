@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',  
     'courses',  
     'corsheaders', 
+    "graphene_django",
 ]
 
 MIDDLEWARE = [
@@ -80,7 +81,9 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 ROOT_URLCONF = 'course_service.urls'
-
+GRAPHENE = {
+    "SCHEMA": "course.schema.schema"  # path to your schema object
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
