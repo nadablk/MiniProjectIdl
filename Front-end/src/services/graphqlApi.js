@@ -1,5 +1,13 @@
-// GraphQL API for Spring Boot (Students & Universities)
-const GRAPHQL_ENDPOINT = "http://localhost:8081/graphql";
+// ===================================================================
+// GraphQL API - Now using API Gateway
+// ===================================================================
+// GraphQL endpoint now routes through the API Gateway
+// Gateway forwards /graphql/** to Spring Boot automatically
+// ===================================================================
+
+// OLD: const GRAPHQL_ENDPOINT = "http://localhost:8081/graphql";
+// NEW: Use Gateway
+const GRAPHQL_ENDPOINT = "http://192.168.117.225:8080/graphql";
 
 /**
  * Generic GraphQL request function

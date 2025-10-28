@@ -1,0 +1,59 @@
+package gateaway.cloud.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
+
+import java.net.URI;
+
+import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
+import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
+
+@Configuration
+public class GatewayConfig {
+
+    // Spring Boot Backend URL (same device - localhost)
+    private static final String SPRING_BOOT_URL = "http://localhost:8081";
+    
+    // Django Backend URL (remote device - update this IP to Device 2's IP)
+    private static final String DJANGO_URL = "http://192.168.117.225:9090";
+
+    @Bean
+    @SuppressWarnings("deprecation")
+    public RouterFunction<ServerResponse> gatewayRoutes() {
+        return route("spring-students")
+                .GET("/api/students/**", http(URI.create(SPRING_BOOT_URL)))
+                .POST("/api/students/**", http(URI.create(SPRING_BOOT_URL)))
+                .PUT("/api/students/**", http(URI.create(SPRING_BOOT_URL)))
+                .DELETE("/api/students/**", http(URI.create(SPRING_BOOT_URL)))
+                .build()
+                
+            .and(route("spring-universities")
+                .GET("/api/universities/**", http(URI.create(SPRING_BOOT_URL)))
+                .POST("/api/universities/**", http(URI.create(SPRING_BOOT_URL)))
+                .PUT("/api/universities/**", http(URI.create(SPRING_BOOT_URL)))
+                .DELETE("/api/universities/**", http(URI.create(SPRING_BOOT_URL)))
+                .build())
+                
+            .and(route("django-courses")
+                .GET("/api/courses/**", http(URI.create(DJANGO_URL)))
+                .POST("/api/courses/**", http(URI.create(DJANGO_URL)))
+                .PUT("/api/courses/**", http(URI.create(DJANGO_URL)))
+                .DELETE("/api/courses/**", http(URI.create(DJANGO_URL)))
+                .build())
+                
+            .and(route("django-enrollments")
+                .GET("/api/enrollments/**", http(URI.create(DJANGO_URL)))
+                .POST("/api/enrollments/**", http(URI.create(DJANGO_URL)))
+                .PUT("/api/enrollments/**", http(URI.create(DJANGO_URL)))
+                .DELETE("/api/enrollments/**", http(URI.create(DJANGO_URL)))
+                .build())
+                
+            // GraphQL route for Spring Boot
+            .and(route("spring-graphql")
+                .POST("/graphql/**", http(URI.create(SPRING_BOOT_URL)))
+                .GET("/graphql/**", http(URI.create(SPRING_BOOT_URL)))
+                .build());
+    }
+}

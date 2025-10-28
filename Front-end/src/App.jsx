@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import FloatingChatButton from "./components/FloatingChatButton";
 import Login from "./auth/login";
 import AdminLayout from "./admin/AdminLayout";
 import Dashboard from "./admin/pages/dashboard";
@@ -14,12 +15,14 @@ import Universities from "./admin/pages/Universities";
 import Courses from "./admin/pages/Courses";
 import Home from "./pages/home";
 import CoursesStudent from "./pages/CoursesStudent";
+import Chatbot from "./pages/Chatbot";
 import "./App.css";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <FloatingChatButton />
         <Routes>
           {/* Public Route */}
           <Route path="/login" element={<Login />} />
@@ -54,6 +57,16 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["student"]}>
                 <CoursesStudent />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Chatbot Route (Accessible to students) */}
+          <Route
+            path="/chatbot"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <Chatbot />
               </ProtectedRoute>
             }
           />

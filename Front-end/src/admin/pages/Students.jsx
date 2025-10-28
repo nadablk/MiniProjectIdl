@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { studentAPI, universityAPI } from "../../services/api";
+import { studentGraphQL, universityGraphQL } from "../../services/graphqlApi";
 import "../style/Students.css";
 
 const Students = () => {
@@ -27,7 +27,7 @@ const Students = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await studentAPI.getAllStudents();
+      const data = await studentGraphQL.getAllStudents();
       setStudents(data);
       setError(null);
     } catch (err) {
@@ -40,7 +40,7 @@ const Students = () => {
 
   const fetchUniversities = async () => {
     try {
-      const data = await universityAPI.getAllUniversities();
+      const data = await universityGraphQL.getAllUniversities();
       setUniversities(data);
     } catch (err) {
       console.error("Error fetching universities:", err);
@@ -55,7 +55,7 @@ const Students = () => {
 
     try {
       setLoading(true);
-      const data = await studentAPI.searchStudents(searchTerm);
+      const data = await studentGraphQL.searchStudents(searchTerm);
       setStudents(data);
       setError(null);
     } catch (err) {
@@ -80,10 +80,10 @@ const Students = () => {
     try {
       if (editingStudent) {
         // Update existing student
-        await studentAPI.updateStudent(editingStudent.id, formData);
+        await studentGraphQL.updateStudent(editingStudent.id, formData);
       } else {
         // Create new student
-        await studentAPI.createStudent(formData);
+        await studentGraphQL.createStudent(formData);
       }
       setShowModal(false);
       setFormData({
@@ -139,7 +139,7 @@ const Students = () => {
     }
 
     try {
-      await studentAPI.deleteStudent(id);
+      await studentGraphQL.deleteStudent(id);
       fetchStudents();
     } catch (err) {
       console.error("Error deleting student:", err);

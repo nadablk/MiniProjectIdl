@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { universityAPI } from "../../services/api";
+import { universityGraphQL } from "../../services/graphqlApi";
 import "../style/Universities.css";
 
 const Universities = () => {
@@ -23,7 +23,7 @@ const Universities = () => {
   const fetchUniversities = async () => {
     try {
       setLoading(true);
-      const data = await universityAPI.getAllUniversities();
+      const data = await universityGraphQL.getAllUniversities();
       setUniversities(data);
       setError(null);
     } catch (err) {
@@ -42,7 +42,7 @@ const Universities = () => {
 
     try {
       setLoading(true);
-      const data = await universityAPI.searchUniversities(searchTerm);
+      const data = await universityGraphQL.searchUniversities(searchTerm);
       setUniversities(data);
       setError(null);
     } catch (err) {
@@ -63,10 +63,13 @@ const Universities = () => {
     try {
       if (editingUniversity) {
         // Update existing university
-        await universityAPI.updateUniversity(editingUniversity.id, formData);
+        await universityGraphQL.updateUniversity(
+          editingUniversity.id,
+          formData
+        );
       } else {
         // Create new university
-        await universityAPI.createUniversity(formData);
+        await universityGraphQL.createUniversity(formData);
       }
       setShowModal(false);
       setFormData({ name: "", location: "" });
@@ -97,7 +100,7 @@ const Universities = () => {
     }
 
     try {
-      await universityAPI.deleteUniversity(id);
+      await universityGraphQL.deleteUniversity(id);
       fetchUniversities();
     } catch (err) {
       console.error("Error deleting university:", err);

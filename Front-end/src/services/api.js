@@ -1,11 +1,29 @@
-// Spring Boot Backend (Students & Universities) - Port 8081
-const DJANGO_API_BASE_URL = "http://192.168.117.225:9090/api";
+// ===================================================================
+// API GATEWAY CONFIGURATION
+// ===================================================================
+// All requests now go through the API Gateway on port 8080
+// Gateway routes to the correct backend service automatically
+//
+// Gateway Device: Same as Spring Boot (Device 1)
+// Gateway Port: 8080
+//
+// Routes:
+// - /api/students/**     → Spring Boot (localhost:8081)
+// - /api/universities/** → Spring Boot (localhost:8081)
+// - /api/courses/**      → Django (192.168.117.225:9090)
+// - /api/enrollments/**  → Django (192.168.117.225:9090)
+// ===================================================================
 
-// Django Backend (Courses & Enrollments) - Port 8081 (on different device)
-// Change this to the actual IP address of the Django server machine
-// Replace with actual Django server IP
-const SPRING_API_BASE_URL = "http://localhost:8081/api";
-//const SPRING_API_BASE_URL = "http://192.168.117.159/api";
+// OLD (Direct Backend Access):
+// const SPRING_API_BASE_URL = "http://localhost:8081/api";
+// const DJANGO_API_BASE_URL = "http://192.168.117.225:9090/api";
+
+// NEW (Through Gateway):
+const GATEWAY_BASE_URL = "http://192.168.117.225:8080/api";
+
+// Use gateway for all API calls
+const SPRING_API_BASE_URL = GATEWAY_BASE_URL;
+const DJANGO_API_BASE_URL = GATEWAY_BASE_URL;
 // Student API (Spring Boot)
 export const studentAPI = {
   // Get all students

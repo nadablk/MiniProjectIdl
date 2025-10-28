@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { studentAPI } from "../../services/api";
+import { studentGraphQL } from "../../services/graphqlApi";
 import "../style/dashboard.css";
 
 const Dashboard = () => {
@@ -42,7 +42,7 @@ const Dashboard = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const studentStats = await studentAPI.getStudentStats();
+      const studentStats = await studentGraphQL.getStudentStats();
       setStats({
         totalStudents: studentStats.totalStudents || 0,
         totalCourses: 156, // TODO: Add courses API when available
