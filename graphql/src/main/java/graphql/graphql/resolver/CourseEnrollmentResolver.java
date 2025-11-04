@@ -1,4 +1,4 @@
-package main.java.graphql.graphql.resolver;
+package graphql.graphql.resolver;
 
 import graphql.graphql.client.DjangoClient;
 import org.springframework.graphql.data.method.annotation.Argument;
