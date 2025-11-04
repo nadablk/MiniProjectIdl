@@ -22,6 +22,7 @@ public class GatewayConfig {
     // Chatbot Service URL
     private static final String CHATBOT_URL = "http://localhost:8002";
 
+
     @Bean
     @SuppressWarnings("deprecation")
     public RouterFunction<ServerResponse> gatewayRoutes() {
