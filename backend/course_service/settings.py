@@ -82,7 +82,7 @@ CORS_ALLOW_HEADERS = [
 ]
 ROOT_URLCONF = 'course_service.urls'
 GRAPHENE = {
-    "SCHEMA": "course.schema.schema"  # path to your schema object
+    "SCHEMA": "courses.schema.schema"  # path to your schema object
 }
 TEMPLATES = [
     {
@@ -110,7 +110,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CourseServiceDB',        
         'USER': 'postgres',           
-        'PASSWORD': 'root',
+        'PASSWORD': 'Its#me@yes.com',
         'HOST': 'localhost',
         'PORT': '5432',
     }
