@@ -57,12 +57,10 @@ export const studentGraphQL = {
   getAllStudents: async () => {
     const query = `
       query {
-        students {
+        allStudents {
           id
-          firstName
-          lastName
+          name
           email
-          fullName
           university {
             id
             name
@@ -72,7 +70,7 @@ export const studentGraphQL = {
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
-    return data.students;
+    return data.allStudents;
   },
 
   /**
@@ -85,10 +83,8 @@ export const studentGraphQL = {
       query GetStudent($id: ID!) {
         student(id: $id) {
           id
-          firstName
-          lastName
+          name
           email
-          fullName
           university {
             id
             name
@@ -110,13 +106,11 @@ export const studentGraphQL = {
    */
   searchStudents: async (searchQuery) => {
     const query = `
-      query SearchStudents($query: String!) {
-        searchStudents(query: $query) {
+      query SearchStudents($name: String!) {
+        studentByName(name: $name) {
           id
-          firstName
-          lastName
+          name
           email
-          fullName
           university {
             id
             name
@@ -125,9 +119,9 @@ export const studentGraphQL = {
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
-      query: searchQuery,
+      name: searchQuery,
     });
-    return data.searchStudents;
+    return data.studentByName ? [data.studentByName] : [];
   },
 
   /**
@@ -137,20 +131,20 @@ export const studentGraphQL = {
    */
   getStudentsByUniversity: async (universityId) => {
     const query = `
-      query GetStudentsByUniversity($universityId: ID!) {
-        studentsByUniversity(universityId: $universityId) {
-          id
-          firstName
-          lastName
-          email
-          fullName
+      query GetUniversity($id: ID!) {
+        university(id: $id) {
+          students {
+            id
+            name
+            email
+          }
         }
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
-      universityId: universityId.toString(),
+      id: universityId.toString(),
     });
-    return data.studentsByUniversity;
+    return data.university?.students || [];
   },
 
   /**
@@ -160,13 +154,13 @@ export const studentGraphQL = {
   getStudentStats: async () => {
     const query = `
       query {
-        studentStats {
-          totalStudents
+        allStudents {
+          id
         }
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
-    return data.studentStats;
+    return { totalStudents: data.allStudents?.length || 0 };
   },
 
   /**
@@ -176,11 +170,10 @@ export const studentGraphQL = {
    */
   createStudent: async (student) => {
     const mutation = `
-      mutation CreateStudent($input: StudentInput!) {
-        createStudent(input: $input) {
+      mutation CreateStudent($name: String!, $email: String!, $universityId: ID) {
+        createStudent(name: $name, email: $email, universityId: $universityId) {
           id
-          firstName
-          lastName
+          name
           email
           university {
             id
@@ -189,15 +182,13 @@ export const studentGraphQL = {
         }
       }
     `;
-    const input = {
-      firstName: student.firstName,
-      lastName: student.lastName,
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
+      name:
+        student.name ||
+        `${student.firstName || ""} ${student.lastName || ""}`.trim(),
       email: student.email,
       universityId:
         student.university?.id?.toString() || student.universityId?.toString(),
-    };
-    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
-      input,
     });
     return data.createStudent;
   },
@@ -210,11 +201,10 @@ export const studentGraphQL = {
    */
   updateStudent: async (id, student) => {
     const mutation = `
-      mutation UpdateStudent($id: ID!, $input: StudentUpdateInput!) {
-        updateStudent(id: $id, input: $input) {
+      mutation UpdateStudent($id: ID!, $name: String, $email: String, $universityId: ID) {
+        updateStudent(id: $id, name: $name, email: $email, universityId: $universityId) {
           id
-          firstName
-          lastName
+          name
           email
           university {
             id
@@ -223,19 +213,16 @@ export const studentGraphQL = {
         }
       }
     `;
-    const input = {};
-    if (student.firstName) input.firstName = student.firstName;
-    if (student.lastName) input.lastName = student.lastName;
-    if (student.email) input.email = student.email;
-    if (student.university?.id || student.universityId) {
-      input.universityId = (
-        student.university?.id || student.universityId
-      ).toString();
-    }
-
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: id.toString(),
-      input,
+      name:
+        student.name ||
+        (student.firstName && student.lastName
+          ? `${student.firstName} ${student.lastName}`
+          : null),
+      email: student.email || null,
+      universityId:
+        (student.university?.id || student.universityId)?.toString() || null,
     });
     return data.updateStudent;
   },
@@ -268,20 +255,19 @@ export const universityGraphQL = {
   getAllUniversities: async () => {
     const query = `
       query {
-        universities {
+        allUniversities {
           id
           name
           location
           students {
             id
-            firstName
-            lastName
+            name
           }
         }
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
-    return data.universities;
+    return data.allUniversities;
   },
 
   /**
@@ -298,8 +284,7 @@ export const universityGraphQL = {
           location
           students {
             id
-            firstName
-            lastName
+            name
             email
           }
         }
@@ -319,7 +304,7 @@ export const universityGraphQL = {
   searchUniversities: async (name) => {
     const query = `
       query SearchUniversities($name: String!) {
-        searchUniversities(name: $name) {
+        universityByName(name: $name) {
           id
           name
           location
@@ -327,7 +312,7 @@ export const universityGraphQL = {
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, { name });
-    return data.searchUniversities;
+    return data.universityByName ? [data.universityByName] : [];
   },
 
   /**
@@ -337,20 +322,17 @@ export const universityGraphQL = {
    */
   createUniversity: async (university) => {
     const mutation = `
-      mutation CreateUniversity($input: UniversityInput!) {
-        createUniversity(input: $input) {
+      mutation CreateUniversity($name: String!, $location: String) {
+        createUniversity(name: $name, location: $location) {
           id
           name
           location
         }
       }
     `;
-    const input = {
-      name: university.name,
-      location: university.location,
-    };
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
-      input,
+      name: university.name,
+      location: university.location || null,
     });
     return data.createUniversity;
   },
@@ -363,21 +345,18 @@ export const universityGraphQL = {
    */
   updateUniversity: async (id, university) => {
     const mutation = `
-      mutation UpdateUniversity($id: ID!, $input: UniversityUpdateInput!) {
-        updateUniversity(id: $id, input: $input) {
+      mutation UpdateUniversity($id: ID!, $name: String, $location: String) {
+        updateUniversity(id: $id, name: $name, location: $location) {
           id
           name
           location
         }
       }
     `;
-    const input = {};
-    if (university.name) input.name = university.name;
-    if (university.location) input.location = university.location;
-
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: id.toString(),
-      input,
+      name: university.name || null,
+      location: university.location || null,
     });
     return data.updateUniversity;
   },
@@ -409,26 +388,26 @@ export const universityGraphQL = {
 export const getDashboardData = async () => {
   const query = `
     query {
-      students {
+      allStudents {
         id
-        firstName
-        lastName
+        name
         university {
           name
         }
       }
-      universities {
+      allUniversities {
         id
         name
         location
       }
-      studentStats {
-        totalStudents
-      }
     }
   `;
   const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
-  return data;
+  return {
+    students: data.allStudents,
+    universities: data.allUniversities,
+    studentStats: { totalStudents: data.allStudents?.length || 0 },
+  };
 };
 
 /**
@@ -441,17 +420,15 @@ export const getStudentWithUniversity = async (id) => {
     query GetStudentWithUniversity($id: ID!) {
       student(id: $id) {
         id
-        firstName
-        lastName
+        name
         email
-        fullName
         university {
           id
           name
           location
           students {
             id
-            fullName
+            name
           }
         }
       }
@@ -491,7 +468,7 @@ export const courseGraphQL = {
    */
   getCourseById: async (id) => {
     const query = `
-      query GetCourse($id: Int!) {
+      query GetCourse($id: ID!) {
         course(id: $id) {
           id
           name
@@ -500,7 +477,7 @@ export const courseGraphQL = {
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
-      id: parseInt(id),
+      id: id.toString(),
     });
     return data.course;
   },
@@ -533,13 +510,9 @@ export const courseGraphQL = {
     const mutation = `
       mutation CreateCourse($name: String!, $description: String) {
         createCourse(name: $name, description: $description) {
-          success
-          message
-          course {
-            id
-            name
-            description
-          }
+          id
+          name
+          description
         }
       }
     `;
@@ -558,20 +531,16 @@ export const courseGraphQL = {
    */
   updateCourse: async (id, course) => {
     const mutation = `
-      mutation UpdateCourse($id: Int!, $name: String, $description: String) {
+      mutation UpdateCourse($id: ID!, $name: String, $description: String) {
         updateCourse(id: $id, name: $name, description: $description) {
-          success
-          message
-          course {
-            id
-            name
-            description
-          }
+          id
+          name
+          description
         }
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
-      id: parseInt(id),
+      id: id.toString(),
       name: course.name || null,
       description: course.description || null,
     });
@@ -585,15 +554,12 @@ export const courseGraphQL = {
    */
   deleteCourse: async (id) => {
     const mutation = `
-      mutation DeleteCourse($id: Int!) {
-        deleteCourse(id: $id) {
-          success
-          message
-        }
+      mutation DeleteCourse($id: ID!) {
+        deleteCourse(id: $id)
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
-      id: parseInt(id),
+      id: id.toString(),
     });
     return data.deleteCourse;
   },
@@ -683,15 +649,11 @@ export const enrollmentGraphQL = {
     const mutation = `
       mutation AddStudentToCourse($studentId: Int!, $courseId: Int!) {
         addStudentToCourse(studentId: $studentId, courseId: $courseId) {
-          success
-          message
-          enrollment {
+          id
+          studentId
+          course {
             id
-            studentId
-            course {
-              id
-              name
-            }
+            name
           }
         }
       }
@@ -712,10 +674,7 @@ export const enrollmentGraphQL = {
   removeStudentFromCourse: async (studentId, courseId) => {
     const mutation = `
       mutation RemoveStudentFromCourse($studentId: Int!, $courseId: Int!) {
-        removeStudentFromCourse(studentId: $studentId, courseId: $courseId) {
-          success
-          message
-        }
+        removeStudentFromCourse(studentId: $studentId, courseId: $courseId)
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
@@ -723,5 +682,84 @@ export const enrollmentGraphQL = {
       courseId: parseInt(courseId),
     });
     return data.removeStudentFromCourse;
+  },
+};
+
+// ==================== CHATBOT QUERIES (Chatbot Service) ====================
+
+export const chatbotGraphQL = {
+  /**
+   * Translate text from one language to another
+   * @param {string} text - Text to translate
+   * @param {string} sourceLang - Source language code
+   * @param {string} targetLang - Target language code
+   * @returns {Promise<Object>} Translation result
+   */
+  translate: async (text, sourceLang, targetLang) => {
+    const mutation = `
+      mutation Translate($text: String!, $sourceLang: String!, $targetLang: String!) {
+        translate(text: $text, sourceLang: $sourceLang, targetLang: $targetLang) {
+          success
+          originalText
+          translatedText
+          sourceLang
+          targetLang
+          error
+        }
+      }
+    `;
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
+      text,
+      sourceLang,
+      targetLang,
+    });
+    return data.translate;
+  },
+
+  /**
+   * Summarize text
+   * @param {string} text - Text to summarize
+   * @param {number} maxLength - Maximum length of summary (optional)
+   * @param {number} minLength - Minimum length of summary (optional)
+   * @returns {Promise<Object>} Summarization result
+   */
+  summarize: async (text, maxLength = null, minLength = null) => {
+    const mutation = `
+      mutation Summarize($text: String!, $maxLength: Int, $minLength: Int) {
+        summarize(text: $text, maxLength: $maxLength, minLength: $minLength) {
+          success
+          originalText
+          summary
+          originalLength
+          summaryLength
+          error
+        }
+      }
+    `;
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
+      text,
+      maxLength,
+      minLength,
+    });
+    return data.summarize;
+  },
+
+  /**
+   * Check chatbot service health
+   * @returns {Promise<Object>} Health status
+   */
+  healthCheck: async () => {
+    const query = `
+      query {
+        chatbotHealth {
+          success
+          status
+          service
+          version
+        }
+      }
+    `;
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
+    return data.chatbotHealth;
   },
 };
