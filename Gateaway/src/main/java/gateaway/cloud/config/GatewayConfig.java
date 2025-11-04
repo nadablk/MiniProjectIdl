@@ -17,7 +17,7 @@ public class GatewayConfig {
     private static final String SPRING_BOOT_URL = "http://localhost:8081";
     
     // Django Backend URL (remote device - update this IP to Device 2's IP)
-    private static final String DJANGO_URL = "http://192.168.117.225:9090";
+    private static final String DJANGO_URL = "http://localhost:9090";
 
     @Bean
     @SuppressWarnings("deprecation")
