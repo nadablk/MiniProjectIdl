@@ -17,14 +17,17 @@ export const NETWORK_CONFIG = {
 ### 2️⃣ Gateway Backend URLs
 
 **File:** `Gateaway/src/main/resources/application.properties`
-**Lines:** ~22-25
+**Lines:** ~22-27
 
 ```properties
 # Spring Boot Backend
 spring.backend.url=http://localhost:8081  # 🔧 CHANGE if Spring Boot moved
 
-# Django Backend
+# Django Backend (Courses)
 django.backend.url=http://localhost:9090  # 🔧 CHANGE if Django moved
+
+# Chatbot Service
+chatbot.backend.url=http://localhost:8002  # 🔧 CHANGE if Chatbot moved
 ```
 
 ---
@@ -71,7 +74,8 @@ Look for: **inet** address
 
 - **Gateway IP:** `192.168.117.225` (change in `apiConfig.js`)
 - **Spring Boot:** `localhost:8081` (same machine as Gateway)
-- **Django:** `localhost:9090` (same machine as Gateway)
+- **Django (Courses):** `localhost:9090` (same machine as Gateway)
+- **Chatbot Service:** `localhost:8002` (same machine as Gateway)
 - **Frontend:** Connects to Gateway at `192.168.117.225:8080`
 
 **To use localhost for everything:** Change `GATEWAY_HOST` to `"localhost"` in `apiConfig.js`

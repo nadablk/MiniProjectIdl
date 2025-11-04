@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { chatbotAPI } from "../services/chatbotApi";
 import "../style/Chatbot.css";
 
 const Chatbot = () => {
@@ -21,8 +22,22 @@ const Chatbot = () => {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [activeTab, setActiveTab] = useState("translate"); // translate, summarize, chat
+  const [sourceLang, setSourceLang] = useState("en");
+  const [targetLang, setTargetLang] = useState("fr");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Language options
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "fr", name: "French" },
+    { code: "es", name: "Spanish" },
+    { code: "de", name: "German" },
+    { code: "it", name: "Italian" },
+    { code: "pt", name: "Portuguese" },
+    { code: "ar", name: "Arabic" },
+    { code: "zh", name: "Chinese" },
+  ];
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -50,37 +65,73 @@ const Chatbot = () => {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageText = inputText;
     setInputText("");
     setIsTyping(true);
 
-    // TODO: Replace with actual API call to Django backend
-    // Simulate API response
-    setTimeout(() => {
+    try {
+      let botResponse = "";
+
+      // Call appropriate API based on active tab
+      if (activeTab === "translate") {
+        const result = await chatbotAPI.translate(
+          messageText,
+          sourceLang,
+          targetLang
+        );
+
+        if (result.success) {
+          const sourceLangName =
+            languages.find((l) => l.code === sourceLang)?.name ||
+            sourceLang.toUpperCase();
+          const targetLangName =
+            languages.find((l) => l.code === targetLang)?.name ||
+            targetLang.toUpperCase();
+
+          botResponse = `🌍 Translation Results:\n\n📝 Original (${sourceLangName}):\n"${result.originalText}"\n\n✨ Translated (${targetLangName}):\n"${result.translatedText}"`;
+        } else {
+          botResponse = `❌ Translation Error: ${result.error}\n\nPlease try again or contact support if the issue persists.`;
+        }
+      } else if (activeTab === "summarize") {
+        const result = await chatbotAPI.summarize(messageText);
+
+        if (result.success) {
+          botResponse = `📝 Summary:\n\n✨ Condensed Text:\n"${
+            result.summary
+          }"\n\n📊 Stats:\n• Original: ${
+            result.originalLength
+          } words\n• Summary: ${
+            result.summaryLength
+          } words\n• Reduction: ${Math.round(
+            (1 - result.summaryLength / result.originalLength) * 100
+          )}%`;
+        } else {
+          botResponse = `❌ Summarization Error: ${result.error}\n\nPlease try again or contact support if the issue persists.`;
+        }
+      } else if (activeTab === "chat") {
+        // Chat mode - for now, echo back with helpful message
+        botResponse = `💬 Chat Mode:\n\nYou said: "${messageText}"\n\nNote: Full conversational AI is coming soon! For now, please use the Translation or Summarization features.`;
+      }
+
       const botMessage = {
         id: Date.now() + 1,
         type: "bot",
-        text: getSimulatedResponse(activeTab, inputText),
+        text: botResponse,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1500);
-  };
 
-  // Simulated responses (will be replaced with actual API)
-  const getSimulatedResponse = (tab, text) => {
-    switch (tab) {
-      case "translate":
-        return `🌍 Translation:\n\n"${text}"\n\n→ French: "Bonjour, comment allez-vous?"\n→ Spanish: "Hola, ¿cómo estás?"\n→ German: "Hallo, wie geht es dir?"`;
-      case "summarize":
-        return `📝 Summary:\n\nYour text has been condensed to its key points:\n\n• Main idea: ${text.substring(
-          0,
-          50
-        )}...\n• Key points extracted\n• Simplified for better understanding`;
-      case "chat":
-        return `💬 I understand you said: "${text}"\n\nHow can I assist you further with this?`;
-      default:
-        return "I'm here to help!";
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error("Chatbot error:", error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        type: "bot",
+        text: `❌ Error: Failed to process your request. Please check if the chatbot service is running.\n\nError details: ${error.message}`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -101,13 +152,6 @@ const Chatbot = () => {
       },
     ]);
   };
-
-  const quickActions = [
-    { icon: "🌍", text: "Translate to French", action: "translate" },
-    { icon: "📝", text: "Summarize this", action: "summarize" },
-    { icon: "💡", text: "Explain concept", action: "chat" },
-    { icon: "🔍", text: "Search info", action: "chat" },
-  ];
 
   return (
     <div className="chatbot-container">
@@ -164,6 +208,43 @@ const Chatbot = () => {
         </button>
       </div>
 
+      {/* Language Selector (only for translate mode) */}
+      {activeTab === "translate" && (
+        <div className="language-selector">
+          <div className="language-group">
+            <label htmlFor="source-lang">From:</label>
+            <select
+              id="source-lang"
+              value={sourceLang}
+              onChange={(e) => setSourceLang(e.target.value)}
+              className="language-dropdown"
+            >
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="arrow-icon">→</div>
+          <div className="language-group">
+            <label htmlFor="target-lang">To:</label>
+            <select
+              id="target-lang"
+              value={targetLang}
+              onChange={(e) => setTargetLang(e.target.value)}
+              className="language-dropdown"
+            >
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
       {/* Messages Area */}
       <div className="messages-container">
         <div className="messages-wrapper">
@@ -203,23 +284,6 @@ const Chatbot = () => {
           )}
 
           <div ref={messagesEndRef} />
-        </div>
-
-        {/* Quick Actions */}
-        <div className="quick-actions">
-          {quickActions.map((action, index) => (
-            <button
-              key={index}
-              className="quick-action-chip"
-              onClick={() => {
-                setInputText(action.text);
-                setActiveTab(action.action);
-              }}
-            >
-              <span>{action.icon}</span>
-              {action.text}
-            </button>
-          ))}
         </div>
       </div>
 

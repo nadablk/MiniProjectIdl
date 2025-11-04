@@ -22,8 +22,8 @@
 // 🔧 CHANGE THIS IP to your Gateway machine's network IP
 
 export const NETWORK_CONFIG = {
-  GATEWAY_HOST: "192.168.117.225", // 🔧 CHANGE THIS when network changes
-  GATEWAY_PORT: 8080,
+  GATEWAY_HOST: "localhost", // 🔧 CHANGE THIS when network changes
+  GATEWAY_PORT: 9091,
 };
 
 // ====================
@@ -39,9 +39,10 @@ export const API_CONFIG = {
   // GraphQL Endpoints
   SPRING_GRAPHQL: `http://${NETWORK_CONFIG.GATEWAY_HOST}:${NETWORK_CONFIG.GATEWAY_PORT}/graphql/spring`,
   DJANGO_GRAPHQL: `http://${NETWORK_CONFIG.GATEWAY_HOST}:${NETWORK_CONFIG.GATEWAY_PORT}/graphql/django`,
-};
 
-// ====================
+  // Chatbot API Endpoint
+  CHATBOT_API: `http://${NETWORK_CONFIG.GATEWAY_HOST}:${NETWORK_CONFIG.GATEWAY_PORT}/api/chatbot`,
+}; // ====================
 // HOW TO FIND YOUR NETWORK IP
 // ====================
 // Windows: Open PowerShell and run: ipconfig
