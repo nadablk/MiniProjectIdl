@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'courses',
-    'corsheaders',
+    'rest_framework',  
+    'courses',  
+    'corsheaders', 
+    "graphene_django",
 ]
 
 MIDDLEWARE = [
@@ -79,9 +80,10 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-
 ROOT_URLCONF = 'course_service.urls'
-
+GRAPHENE = {
+    "SCHEMA": "courses.schema.schema"  # path to your schema object
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -108,7 +110,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CourseServiceDB',        
         'USER': 'postgres',           
-        'PASSWORD': 'root',
+        'PASSWORD': 'Its#me@yes.com',
         'HOST': 'localhost',
         'PORT': '5432',
     }
