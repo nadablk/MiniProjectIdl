@@ -17,7 +17,10 @@ public class GatewayConfig {
     private static final String SPRING_BOOT_URL = "http://localhost:8081";
     
     // Django Backend URL (remote device - update this IP to Device 2's IP)
-    private static final String DJANGO_URL = "http://192.168.117.225:9090";
+    private static final String DJANGO_URL = "http://localhost:9090";
+    
+    // Chatbot Service URL
+    private static final String CHATBOT_URL = "http://localhost:8002";
 
     @Bean
     @SuppressWarnings("deprecation")
@@ -50,10 +53,29 @@ public class GatewayConfig {
                 .DELETE("/api/enrollments/**", http(URI.create(DJANGO_URL)))
                 .build())
                 
-            // GraphQL route for Spring Boot
+            // Spring Boot GraphQL - Route to /graphql endpoint on Spring Boot
             .and(route("spring-graphql")
-                .POST("/graphql/**", http(URI.create(SPRING_BOOT_URL)))
-                .GET("/graphql/**", http(URI.create(SPRING_BOOT_URL)))
+                .POST("/graphql/spring/**", http(SPRING_BOOT_URL + "/graphql"))
+                .GET("/graphql/spring/**", http(SPRING_BOOT_URL + "/graphql"))
+                .build())
+                
+            // Django GraphQL - Route to /graphql endpoint on Django
+            .and(route("django-graphql")
+                .POST("/graphql/django/**", http(DJANGO_URL + "/graphql"))
+                .GET("/graphql/django/**", http(DJANGO_URL + "/graphql"))
+                .build())
+                
+            // Chatbot routes
+            .and(route("chatbot-translate")
+                .POST("/api/chatbot/translate/**", http(URI.create(CHATBOT_URL)))
+                .build())
+                
+            .and(route("chatbot-summarize")
+                .POST("/api/chatbot/summarize/**", http(URI.create(CHATBOT_URL)))
+                .build())
+                
+            .and(route("chatbot-health")
+                .GET("/api/chatbot/health/**", http(URI.create(CHATBOT_URL)))
                 .build());
     }
 }

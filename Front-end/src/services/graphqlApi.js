@@ -1,20 +1,19 @@
 // ===================================================================
-// GraphQL API - Now using API Gateway
+// GraphQL API - Unified GraphQL Gateway
 // ===================================================================
-// GraphQL endpoints now route through the API Gateway
-// Gateway forwards /graphql/spring/** to Spring Boot (port 8081)
-// Gateway forwards /graphql/django/** to Django (port 9090)
+// All GraphQL queries go through a single GraphQL service (port 9000)
+// This service aggregates APIs from:
+// - Spring Boot (Students & Universities - port 8081)
+// - Django (Courses & Enrollments - port 9090)
+// - Chatbot (Translation & Summarization - port 8002)
 //
 // 🔧 TO CHANGE NETWORK IP: Edit /src/config/apiConfig.js
 // ===================================================================
 
 import { API_CONFIG } from "../config/apiConfig.js";
 
-// Spring Boot GraphQL endpoint (Students & Universities)
-const SPRING_GRAPHQL_ENDPOINT = API_CONFIG.SPRING_GRAPHQL;
-
-// Django GraphQL endpoint (Courses & Enrollments)
-const DJANGO_GRAPHQL_ENDPOINT = API_CONFIG.DJANGO_GRAPHQL;
+// Single GraphQL endpoint for all operations
+const GRAPHQL_ENDPOINT = API_CONFIG.GRAPHQL_ENDPOINT;
 
 /**
  * Generic GraphQL request function
@@ -72,7 +71,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
     return data.students;
   },
 
@@ -98,7 +97,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       id: id.toString(),
     });
     return data.student;
@@ -125,7 +124,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       query: searchQuery,
     });
     return data.searchStudents;
@@ -148,7 +147,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       universityId: universityId.toString(),
     });
     return data.studentsByUniversity;
@@ -166,7 +165,7 @@ export const studentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
     return data.studentStats;
   },
 
@@ -197,7 +196,7 @@ export const studentGraphQL = {
       universityId:
         student.university?.id?.toString() || student.universityId?.toString(),
     };
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       input,
     });
     return data.createStudent;
@@ -234,7 +233,7 @@ export const studentGraphQL = {
       ).toString();
     }
 
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: id.toString(),
       input,
     });
@@ -252,7 +251,7 @@ export const studentGraphQL = {
         deleteStudent(id: $id)
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: id.toString(),
     });
     return data.deleteStudent;
@@ -281,7 +280,7 @@ export const universityGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
     return data.universities;
   },
 
@@ -306,7 +305,7 @@ export const universityGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       id: id.toString(),
     });
     return data.university;
@@ -327,7 +326,7 @@ export const universityGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, { name });
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, { name });
     return data.searchUniversities;
   },
 
@@ -350,7 +349,7 @@ export const universityGraphQL = {
       name: university.name,
       location: university.location,
     };
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       input,
     });
     return data.createUniversity;
@@ -376,7 +375,7 @@ export const universityGraphQL = {
     if (university.name) input.name = university.name;
     if (university.location) input.location = university.location;
 
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: id.toString(),
       input,
     });
@@ -394,7 +393,7 @@ export const universityGraphQL = {
         deleteUniversity(id: $id)
       }
     `;
-    const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: id.toString(),
     });
     return data.deleteUniversity;
@@ -428,7 +427,7 @@ export const getDashboardData = async () => {
       }
     }
   `;
-  const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query);
+  const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
   return data;
 };
 
@@ -458,7 +457,7 @@ export const getStudentWithUniversity = async (id) => {
       }
     }
   `;
-  const data = await graphqlRequest(SPRING_GRAPHQL_ENDPOINT, query, {
+  const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
     id: id.toString(),
   });
   return data.student;
@@ -481,7 +480,7 @@ export const courseGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query);
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
     return data.allCourses;
   },
 
@@ -500,7 +499,7 @@ export const courseGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       id: parseInt(id),
     });
     return data.course;
@@ -521,7 +520,7 @@ export const courseGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, { name });
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, { name });
     return data.courseByName;
   },
 
@@ -544,7 +543,7 @@ export const courseGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       name: course.name,
       description: course.description || null,
     });
@@ -571,7 +570,7 @@ export const courseGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: parseInt(id),
       name: course.name || null,
       description: course.description || null,
@@ -593,7 +592,7 @@ export const courseGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       id: parseInt(id),
     });
     return data.deleteCourse;
@@ -621,7 +620,7 @@ export const enrollmentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query);
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query);
     return data.allEnrollments;
   },
 
@@ -643,7 +642,7 @@ export const enrollmentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       courseId: parseInt(courseId),
     });
     return data.enrollmentsByCourse;
@@ -668,7 +667,7 @@ export const enrollmentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, query, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, query, {
       studentId: parseInt(studentId),
     });
     return data.enrollmentsByStudent;
@@ -697,7 +696,7 @@ export const enrollmentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       studentId: parseInt(studentId),
       courseId: parseInt(courseId),
     });
@@ -719,7 +718,7 @@ export const enrollmentGraphQL = {
         }
       }
     `;
-    const data = await graphqlRequest(DJANGO_GRAPHQL_ENDPOINT, mutation, {
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       studentId: parseInt(studentId),
       courseId: parseInt(courseId),
     });
