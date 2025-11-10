@@ -86,21 +86,14 @@ const Courses = () => {
       const courseData = {
         name: courseFormData.name,
         description: courseFormData.description || "",
+        credits: courseFormData.credits || null,
+        instructor: courseFormData.instructor || null,
       };
 
       if (editingCourse) {
-        const result = await courseGraphQL.updateCourse(
-          editingCourse.id,
-          courseData
-        );
-        if (!result.success) {
-          throw new Error(result.message || "Failed to update course");
-        }
+        await courseGraphQL.updateCourse(editingCourse.id, courseData);
       } else {
-        const result = await courseGraphQL.createCourse(courseData);
-        if (!result.success) {
-          throw new Error(result.message || "Failed to create course");
-        }
+        await courseGraphQL.createCourse(courseData);
       }
       setShowCourseModal(false);
       setCourseFormData({
@@ -145,10 +138,7 @@ const Courses = () => {
     }
 
     try {
-      const result = await courseGraphQL.deleteCourse(id);
-      if (!result.success) {
-        throw new Error(result.message || "Failed to delete course");
-      }
+      await courseGraphQL.deleteCourse(id);
       fetchCourses();
     } catch (err) {
       console.error("Error deleting course:", err);
@@ -176,24 +166,27 @@ const Courses = () => {
           ? enrollmentFormData.course.id
           : parseInt(enrollmentFormData.course);
 
-      console.log("Submitting enrollment:", { studentId, courseId });
+      const gradeValue = enrollmentFormData.grade || null;
+      console.log("Submitting enrollment:", {
+        studentId,
+        courseId,
+        grade: gradeValue,
+      });
 
       if (editingEnrollment) {
-        // For now, GraphQL doesn't support updating enrollments
-        // You would need to remove and re-add
-        alert(
-          "Editing enrollments is not supported. Please delete and create a new one."
-        );
-        return;
+        // Update existing enrollment
+        await enrollmentGraphQL.updateEnrollment(editingEnrollment.id, {
+          studentId: studentId,
+          courseId: courseId,
+          grade: gradeValue,
+        });
       } else {
         // Create new enrollment
-        const result = await enrollmentGraphQL.addStudentToCourse(
+        await enrollmentGraphQL.addStudentToCourse(
           studentId,
-          courseId
+          courseId,
+          gradeValue
         );
-        if (!result.success) {
-          throw new Error(result.message || "Failed to create enrollment");
-        }
       }
       setShowEnrollmentModal(false);
       setEnrollmentFormData({

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Course, StudentCourse
+import requests
+import os
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -21,8 +23,18 @@ class StudentCourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'student_name', 'course_name']
     
     def get_student_name(self, obj):
-        # You'll need to fetch student name from Spring Boot API or store it locally
-        # For now, return the student_id as a placeholder
+        # Fetch student name from Spring Boot API
+        try:
+            student_service_url = os.getenv('STUDENT_SERVICE_URL', 'http://localhost:8081')
+            response = requests.get(f"{student_service_url}/api/students/{obj.student_id}", timeout=2)
+            if response.status_code == 200:
+                student_data = response.json()
+                first_name = student_data.get('firstName', '')
+                last_name = student_data.get('lastName', '')
+                return f"{first_name} {last_name}".strip()
+        except Exception as e:
+            # If API call fails, return placeholder
+            print(f"Error fetching student name: {e}")
         return f"Student {obj.student_id}"
     
     def create(self, validated_data):

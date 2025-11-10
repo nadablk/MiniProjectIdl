@@ -28,11 +28,12 @@ const Students = () => {
     try {
       setLoading(true);
       const data = await studentGraphQL.getAllStudents();
-      setStudents(data);
+      setStudents(data || []); // Ensure we always have an array
       setError(null);
     } catch (err) {
       console.error("Error fetching students:", err);
       setError("Failed to load students");
+      setStudents([]); // Set to empty array on error
     } finally {
       setLoading(false);
     }
@@ -169,7 +170,8 @@ const Students = () => {
         <div>
           <h1>Student Management</h1>
           <p className="page-subtitle">
-            {students.length} student{students.length !== 1 ? "s" : ""} enrolled
+            {(students || []).length} student
+            {(students || []).length !== 1 ? "s" : ""} enrolled
           </p>
         </div>
         <button className="add-btn" onClick={handleAddNew}>
@@ -221,7 +223,7 @@ const Students = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredStudents.map((student) => (
+              {(filteredStudents || []).map((student) => (
                 <tr key={student.id}>
                   <td>#{student.id}</td>
                   <td>

@@ -1,111 +1,213 @@
-# GraphQL Unified Gateway
+# GraphQL API Gateway# GraphQL Unified Gateway
 
-## Overview
+A unified GraphQL API gateway that aggregates multiple microservices:## Overview
 
-This is a unified GraphQL gateway that consolidates all APIs from:
+- **Student Service** (Spring Boot - port 8081)
+
+- **Course Service** (Django - port 9090)This is a unified GraphQL gateway that consolidates all APIs from:
+
+- **AI/Chatbot Service** (port 8002)
 
 - **Spring Boot** (Students & Universities) - Port 8081
-- **Django** (Courses & Enrollments) - Port 9090
+
+## Setup- **Django** (Courses & Enrollments) - Port 9090
+
 - **Chatbot Service** (Translation & Summarization) - Port 8002
 
-## Architecture
+1. Install dependencies:
+
+```bash## Architecture
+
+npm install
 
 ```
+
 Frontend (Port 5173)
-    ↓
-GraphQL Service (Port 9000) ← **YOU ARE HERE**
-    ├→ Spring Boot (Port 8081)
-    ├→ Django (Port 9090)
-    └→ Chatbot (Port 8002)
-```
+
+2. Configure environment variables in `.env`: ↓
+
+````envGraphQL Service (Port 9000) ← **YOU ARE HERE**
+
+STUDENT_BASE=http://localhost:8081    ├→ Spring Boot (Port 8081)
+
+COURSE_BASE=http://localhost:9090/api    ├→ Django (Port 9090)
+
+AI_BASE=http://localhost:8002    └→ Chatbot (Port 8002)
+
+PORT=9000```
+
+````
 
 ## Quick Start
 
-### 1. Start Backend Services First
+3. Start the server:
 
-Make sure all backend services are running:
+````bash### 1. Start Backend Services First
 
-```powershell
-# Terminal 1: Spring Boot
-cd Backend_spring
-mvn spring-boot:run
+npm start
 
-# Terminal 2: Django Courses
+```Make sure all backend services are running:
+
+
+
+For development with auto-reload:```powershell
+
+```bash# Terminal 1: Spring Boot
+
+npm run devcd Backend_spring
+
+```mvn spring-boot:run
+
+
+
+## Access# Terminal 2: Django Courses
+
 cd backend
-python manage.py runserver 9090
+
+- GraphQL Playground: http://localhost:9000python manage.py runserver 9090
+
+- Health Check: Query `chatbotHealth`
 
 # Terminal 3: Chatbot
-cd chatbot_service
+
+## Example Queriescd chatbot_service
+
 python manage.py runserver 8002
-```
 
-### 2. Start GraphQL Service
+### Get All Students```
 
-```powershell
-cd graphql
-mvn spring-boot:run
-```
+```graphql
 
-Service will start on: `http://localhost:9000`
+query {### 2. Start GraphQL Service
 
-### 3. Test GraphQL
+  allStudents {
 
-Open GraphiQL interface: `http://localhost:9000/graphiql`
+    id```powershell
+
+    namecd graphql
+
+    emailmvn spring-boot:run
+
+    university {```
+
+      id
+
+      nameService will start on: `http://localhost:9000`
+
+      location
+
+    }### 3. Test GraphQL
+
+  }
+
+}Open GraphiQL interface: `http://localhost:9000/graphiql`
+
+````
 
 ## Example Queries
 
-### Get All Students
-
-```graphql
-query {
-  allStudents {
-    id
-    name
-    email
-    university {
-      id
-      name
-    }
-  }
-}
-```
-
 ### Get All Courses
 
-```graphql
+````graphql### Get All Students
+
 query {
-  allCourses {
-    id
-    name
-    description
+
+  allCourses {```graphql
+
+    idquery {
+
+    name  allStudents {
+
+    description    id
+
+    instructor    name
+
+    category    email
+
+    credits    university {
+
+  }      id
+
+}      name
+
+```    }
+
   }
-}
-```
 
-### Translate Text
+### Create Course}
 
-```graphql
+```graphql```
+
 mutation {
-  translate(text: "Hello world", sourceLang: "en", targetLang: "fr") {
-    success
-    translatedText
-    originalText
-  }
+
+  createCourse(input: {### Get All Courses
+
+    name: "Introduction to GraphQL"
+
+    description: "Learn GraphQL basics"```graphql
+
+    instructor: "John Doe"query {
+
+    category: "CS"  allCourses {
+
+    credits: 3    id
+
+  }) {    name
+
+    id    description
+
+    name  }
+
+    instructor}
+
+  }```
+
 }
-```
 
-### Summarize Text
+```### Translate Text
 
-```graphql
-mutation {
-  summarize(text: "Long text here...", maxLength: 130, minLength: 30) {
-    success
-    summary
-    originalLength
+
+
+### Add Student to Course```graphql
+
+```graphqlmutation {
+
+mutation {  translate(text: "Hello world", sourceLang: "en", targetLang: "fr") {
+
+  addStudentToCourse(input: {    success
+
+    student_id: 1    translatedText
+
+    course: 1    originalText
+
+    status: "ENROLLED"  }
+
+  }) {}
+
+    id```
+
+    student_id
+
+    course {### Summarize Text
+
+      id
+
+      name```graphql
+
+    }mutation {
+
+    status  summarize(text: "Long text here...", maxLength: 130, minLength: 30) {
+
+  }    success
+
+}    summary
+
+```    originalLength
+
     summaryLength
   }
 }
-```
+````
 
 ## Configuration
 

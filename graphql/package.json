@@ -1,0 +1,25 @@
+{
+  "name": "graphql-gateway",
+  "version": "1.0.0",
+  "description": "GraphQL API Gateway for Student Management System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "graphql",
+    "apollo-server",
+    "gateway"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^3.13.0",
+    "dotenv": "^16.3.1",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

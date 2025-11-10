@@ -59,7 +59,8 @@ export const studentGraphQL = {
       query {
         allStudents {
           id
-          name
+          firstName
+          lastName
           email
           university {
             id
@@ -83,7 +84,8 @@ export const studentGraphQL = {
       query GetStudent($id: ID!) {
         student(id: $id) {
           id
-          name
+          firstName
+          lastName
           email
           university {
             id
@@ -109,7 +111,8 @@ export const studentGraphQL = {
       query SearchStudents($name: String!) {
         studentByName(name: $name) {
           id
-          name
+          firstName
+          lastName
           email
           university {
             id
@@ -135,7 +138,8 @@ export const studentGraphQL = {
         university(id: $id) {
           students {
             id
-            name
+            firstName
+            lastName
             email
           }
         }
@@ -173,7 +177,8 @@ export const studentGraphQL = {
       mutation CreateStudent($name: String!, $email: String!, $universityId: ID) {
         createStudent(name: $name, email: $email, universityId: $universityId) {
           id
-          name
+          firstName
+          lastName
           email
           university {
             id
@@ -204,7 +209,8 @@ export const studentGraphQL = {
       mutation UpdateStudent($id: ID!, $name: String, $email: String, $universityId: ID) {
         updateStudent(id: $id, name: $name, email: $email, universityId: $universityId) {
           id
-          name
+          firstName
+          lastName
           email
           university {
             id
@@ -261,7 +267,8 @@ export const universityGraphQL = {
           location
           students {
             id
-            name
+            firstName
+            lastName
           }
         }
       }
@@ -284,7 +291,8 @@ export const universityGraphQL = {
           location
           students {
             id
-            name
+            firstName
+            lastName
             email
           }
         }
@@ -454,6 +462,10 @@ export const courseGraphQL = {
           id
           name
           description
+          credits
+          instructor
+          created_at
+          updated_at
         }
       }
     `;
@@ -473,6 +485,10 @@ export const courseGraphQL = {
           id
           name
           description
+          credits
+          instructor
+          created_at
+          updated_at
         }
       }
     `;
@@ -494,6 +510,10 @@ export const courseGraphQL = {
           id
           name
           description
+          credits
+          instructor
+          created_at
+          updated_at
         }
       }
     `;
@@ -503,22 +523,28 @@ export const courseGraphQL = {
 
   /**
    * Create a new course
-   * @param {Object} course - Course data {name, description}
+   * @param {Object} course - Course data {name, description, credits, instructor}
    * @returns {Promise<Object>} Created course
    */
   createCourse: async (course) => {
     const mutation = `
-      mutation CreateCourse($name: String!, $description: String) {
-        createCourse(name: $name, description: $description) {
+      mutation CreateCourse($name: String!, $description: String, $credits: Int, $instructor: String) {
+        createCourse(name: $name, description: $description, credits: $credits, instructor: $instructor) {
           id
           name
           description
+          credits
+          instructor
+          created_at
+          updated_at
         }
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       name: course.name,
-      description: course.description || null,
+      description: course.description || "",
+      credits: course.credits ? parseInt(course.credits) : null,
+      instructor: course.instructor || null,
     });
     return data.createCourse;
   },
@@ -531,11 +557,15 @@ export const courseGraphQL = {
    */
   updateCourse: async (id, course) => {
     const mutation = `
-      mutation UpdateCourse($id: ID!, $name: String, $description: String) {
-        updateCourse(id: $id, name: $name, description: $description) {
+      mutation UpdateCourse($id: ID!, $name: String, $description: String, $credits: Int, $instructor: String) {
+        updateCourse(id: $id, name: $name, description: $description, credits: $credits, instructor: $instructor) {
           id
           name
           description
+          credits
+          instructor
+          created_at
+          updated_at
         }
       }
     `;
@@ -543,6 +573,8 @@ export const courseGraphQL = {
       id: id.toString(),
       name: course.name || null,
       description: course.description || null,
+      credits: course.credits ? parseInt(course.credits) : null,
+      instructor: course.instructor || null,
     });
     return data.updateCourse;
   },
@@ -577,12 +609,12 @@ export const enrollmentGraphQL = {
       query {
         allEnrollments {
           id
-          studentId
-          course {
-            id
-            name
-            description
-          }
+          student_id
+          student_name
+          course
+          course_name
+          grade
+          enrollment_date
         }
       }
     `;
@@ -600,11 +632,11 @@ export const enrollmentGraphQL = {
       query GetEnrollmentsByCourse($courseId: Int!) {
         enrollmentsByCourse(courseId: $courseId) {
           id
-          studentId
-          course {
-            id
-            name
-          }
+          student_id
+          student_name
+          course
+          course_name
+          grade
         }
       }
     `;
@@ -624,12 +656,12 @@ export const enrollmentGraphQL = {
       query GetEnrollmentsByStudent($studentId: Int!) {
         enrollmentsByStudent(studentId: $studentId) {
           id
-          studentId
-          course {
-            id
-            name
-            description
-          }
+          student_id
+          student_name
+          course
+          course_name
+          grade
+          enrollment_date
         }
       }
     `;
@@ -643,26 +675,56 @@ export const enrollmentGraphQL = {
    * Add a student to a course (create enrollment)
    * @param {number} studentId - Student ID
    * @param {number} courseId - Course ID
+   * @param {string} grade - Optional grade
    * @returns {Promise<Object>} Enrollment result
    */
-  addStudentToCourse: async (studentId, courseId) => {
+  addStudentToCourse: async (studentId, courseId, grade = null) => {
     const mutation = `
-      mutation AddStudentToCourse($studentId: Int!, $courseId: Int!) {
-        addStudentToCourse(studentId: $studentId, courseId: $courseId) {
+      mutation AddStudentToCourse($studentId: Int!, $courseId: Int!, $grade: String) {
+        addStudentToCourse(studentId: $studentId, courseId: $courseId, grade: $grade) {
           id
-          studentId
-          course {
-            id
-            name
-          }
+          student_id
+          student_name
+          course
+          course_name
+          grade
         }
       }
     `;
     const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
       studentId: parseInt(studentId),
       courseId: parseInt(courseId),
+      grade: grade,
     });
     return data.addStudentToCourse;
+  },
+
+  /**
+   * Update an enrollment
+   * @param {number} id - Enrollment ID
+   * @param {Object} enrollment - Updated enrollment data {studentId, courseId, grade}
+   * @returns {Promise<Object>} Updated enrollment
+   */
+  updateEnrollment: async (id, enrollment) => {
+    const mutation = `
+      mutation UpdateEnrollment($id: ID!, $studentId: Int, $courseId: Int, $grade: String) {
+        updateEnrollment(id: $id, studentId: $studentId, courseId: $courseId, grade: $grade) {
+          id
+          student_id
+          student_name
+          course
+          course_name
+          grade
+        }
+      }
+    `;
+    const data = await graphqlRequest(GRAPHQL_ENDPOINT, mutation, {
+      id: id.toString(),
+      studentId: enrollment.studentId ? parseInt(enrollment.studentId) : null,
+      courseId: enrollment.courseId ? parseInt(enrollment.courseId) : null,
+      grade: enrollment.grade || null,
+    });
+    return data.updateEnrollment;
   },
 
   /**

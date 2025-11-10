@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { chatbotAPI } from "../services/chatbotApi";
+import { chatbotGraphQL } from "../services/graphqlApi";
 import "../style/Chatbot.css";
 
 const Chatbot = () => {
@@ -74,7 +74,7 @@ const Chatbot = () => {
 
       // Call appropriate API based on active tab
       if (activeTab === "translate") {
-        const result = await chatbotAPI.translate(
+        const result = await chatbotGraphQL.translate(
           messageText,
           sourceLang,
           targetLang
@@ -93,7 +93,7 @@ const Chatbot = () => {
           botResponse = `❌ Translation Error: ${result.error}\n\nPlease try again or contact support if the issue persists.`;
         }
       } else if (activeTab === "summarize") {
-        const result = await chatbotAPI.summarize(messageText);
+        const result = await chatbotGraphQL.summarize(messageText);
 
         if (result.success) {
           botResponse = `📝 Summary:\n\n✨ Condensed Text:\n"${
