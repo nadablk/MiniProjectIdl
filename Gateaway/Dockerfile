@@ -23,11 +23,11 @@ WORKDIR /app
 # Copy the built jar from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose port - Render provides PORT dynamically
-EXPOSE ${PORT:-9091}
+# Expose port
+EXPOSE 9091
 
 # Set environment variables (can be overridden by Render)
-ENV SERVER_PORT=${PORT:-9091}
+ENV SERVER_PORT=9091
 ENV GRAPHQL_SERVICE_URL=http://localhost:9000/graphql
 ENV STUDENT_SERVICE_URL=http://localhost:8081
 ENV COURSE_SERVICE_URL=http://localhost:9090
