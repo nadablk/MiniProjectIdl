@@ -23,18 +23,9 @@ WORKDIR /app
 # Copy the built jar from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose port
+# Expose port (Render will assign dynamically)
 EXPOSE 8081
 
-# Set environment variables (can be overridden by Render)
-ENV SERVER_PORT=8081
-ENV SPRING_DATASOURCE_URL=jdbc:mysql://sql7.freesqldatabase.com:3306/sql7807643
-ENV SPRING_DATASOURCE_USERNAME=sql7807643
-ENV SPRING_DATASOURCE_PASSWORD=dUh4zRXskS
-
-
-
-
-
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# The PORT environment variable from Render will be picked up by Spring Boot
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
