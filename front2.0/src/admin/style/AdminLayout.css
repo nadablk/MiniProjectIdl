@@ -1,0 +1,167 @@
+.admin-layout {
+  min-height: 100vh;
+  background-color: #e8dccc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Styles */
+.admin-header {
+  background-color: #603b28;
+  color: #e8dccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-header-left h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: "Georgia", serif;
+  color: #e8dccc;
+  margin: 0;
+}
+
+.gateway-badge {
+  font-size: 0.75rem;
+  color: #e8dccc;
+  opacity: 0.85;
+  padding: 0.3rem 0.8rem;
+  background-color: rgba(232, 220, 204, 0.2);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.admin-user {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #e8dccc;
+}
+
+.logout-button {
+  padding: 0.6rem 1.2rem;
+  background-color: transparent;
+  color: #e8dccc;
+  border: 1.5px solid #e8dccc;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.logout-button:hover {
+  background-color: #e8dccc;
+  color: #603b28;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Container with Sidebar */
+.admin-container {
+  display: flex;
+  flex: 1;
+  max-width: 100%;
+}
+
+/* Sidebar Navigation */
+.admin-sidebar {
+  width: 250px;
+  background-color: #603b28;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem;
+  color: #e8dccc;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+  background-color: rgba(232, 220, 204, 0.1);
+  border-left-color: #e8dccc;
+}
+
+.nav-item.active {
+  background-color: rgba(232, 220, 204, 0.2);
+  border-left-color: #e8dccc;
+  font-weight: 600;
+}
+
+/* Main Content Area */
+.admin-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: #e8dccc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-header {
+    padding: 1rem;
+  }
+
+  .admin-header-left h1 {
+    font-size: 1.3rem;
+  }
+
+  .gateway-badge {
+    display: none;
+  }
+
+  .admin-container {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+
+  .nav-item {
+    flex-shrink: 0;
+    border-left: none;
+    border-bottom: 4px solid transparent;
+  }
+
+  .nav-item:hover,
+  .nav-item.active {
+    border-left: none;
+    border-bottom-color: #e8dccc;
+  }
+
+  .admin-main {
+    padding: 1rem;
+  }
+}

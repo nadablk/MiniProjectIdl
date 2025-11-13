@@ -1,0 +1,381 @@
+.universities-container {
+  width: 100%;
+}
+
+/* Error Banner */
+.error-banner {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #8b5a3c;
+  font-size: 1.1rem;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2.2rem;
+  color: #603b28;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-family: "Georgia", serif;
+}
+
+.page-subtitle {
+  color: #8b5a3c;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #603b28;
+  color: #e8dccc;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(96, 59, 40, 0.2);
+}
+
+.add-btn:hover {
+  background: #4a2d1f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(96, 59, 40, 0.3);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  flex: 1;
+  min-width: 300px;
+  box-shadow: 0 2px 8px rgba(96, 59, 40, 0.08);
+}
+
+.search-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 1rem;
+  color: #603b28;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.7rem 1.2rem;
+  border: 2px solid #603b28;
+  background: white;
+  color: #603b28;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: #f5f5f5;
+}
+
+.filter-btn.active {
+  background: #603b28;
+  color: #e8dccc;
+}
+
+/* Table Container */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(96, 59, 40, 0.08);
+  overflow: hidden;
+}
+
+.universities-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.universities-table thead {
+  background: #603b28;
+  color: #e8dccc;
+}
+
+.universities-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+.universities-table tbody tr {
+  border-bottom: 1px solid #f0e5d8;
+  transition: background 0.2s ease;
+}
+
+.universities-table tbody tr:hover {
+  background: #fbf8f4;
+}
+
+.universities-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.universities-table td {
+  padding: 1rem;
+  color: #603b28;
+}
+
+.university-name {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-weight: 600;
+}
+
+.avatar {
+  font-size: 1.5rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn.edit {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.action-btn.edit:hover {
+  background: #fde68a;
+  transform: scale(1.1);
+}
+
+.action-btn.delete {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.action-btn.delete:hover {
+  background: #fecaca;
+  transform: scale(1.1);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(96, 59, 40, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(96, 59, 40, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid #f0e5d8;
+}
+
+.modal-header h2 {
+  color: #603b28;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: "Georgia", serif;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #8b5a3c;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f0e5d8;
+  transform: rotate(90deg);
+}
+
+/* University Form */
+.university-form {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: #603b28;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.9rem;
+  border: 2px solid #e8dccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #603b28;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #603b28;
+  box-shadow: 0 0 0 3px rgba(96, 59, 40, 0.1);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f0e5d8;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 0.9rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+  color: #603b28;
+}
+
+.cancel-btn:hover {
+  background: #e5e5e5;
+}
+
+.submit-btn {
+  background: #603b28;
+  color: #e8dccc;
+  box-shadow: 0 2px 8px rgba(96, 59, 40, 0.2);
+}
+
+.submit-btn:hover {
+  background: #4a2d1f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(96, 59, 40, 0.3);
+}
