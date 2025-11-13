@@ -193,3 +193,19 @@ class StudentCourse(models.Model):
 # #     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 # #     student_id = models.IntegerField()  # Reference to student in other DB
 #     enrolled_at = models.DateTimeField(auto_now_add=True)
+class SharedTable(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    student_id = models.IntegerField(foreign_key=True)
+    course_id = models.IntegerField()
+    enrollment_date = models.DateTimeField()
+    status = models.CharField(max_length=50)
+    grade= models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    attendance_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        db_table = 'student_courses'  # exact table name from Spring
+        managed = False  # Django will NOT run migrations for this table

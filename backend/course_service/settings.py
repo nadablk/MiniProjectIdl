@@ -108,14 +108,13 @@ WSGI_APPLICATION = 'course_service.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CourseServiceDB',        
-        'USER': 'postgres',           
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
+        'NAME': 'mini_projet_db',        
+        'USER': 'mini_projet_db_user',           
+        'PASSWORD': 'NWfmn6MF1VHbF90hDLHpn0WkKN3ssCYM',
+        'HOST': 'dpg-d4b2n0he2q1c73bc4srg-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 }
-
 
 
 # Password validation
