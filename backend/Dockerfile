@@ -26,16 +26,8 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-echo "Running migrations..."\n\
-python manage.py migrate --noinput\n\
-echo "Migrations complete. Starting server..."\n\
-gunicorn course_service.wsgi:application --bind 0.0.0.0:9090 --workers 4' > /app/start.sh && \
-chmod +x /app/start.sh
-
 # Expose port
 EXPOSE 9090
 
-# Run startup script
-CMD ["/app/start.sh"]
+# Run migrations and start server with gunicorn
+CMD sh -c "python manage.py migrate --noinput && gunicorn course_service.wsgi:application --bind 0.0.0.0:9090 --workers 3 --timeout 120 --access-logfile - --error-logfile -"
