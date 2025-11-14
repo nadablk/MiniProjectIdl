@@ -1,12 +1,32 @@
+# Core Django & ASGI
 asgiref==3.10.0
 Django==5.2.7
-psycopg2-binary==2.9.11
 sqlparse==0.5.3
 tzdata==2025.2
-Django-cors-headers==4.3.1
+
+# Database
+psycopg2-binary==2.9.11
 dj-database-url==3.0.1
-# python-decouple>=6.0
-python-decouple==3.7 
+
+# Configuration
+python-decouple==3.7
+
+# REST Framework & Serialization
+djangorestframework==3.14.0
+
+# GraphQL
+graphene==3.3
+graphene-django==3.1.1
+
+# CORS
+Django-cors-headers==4.3.1
+
+# Static Files & Production
+whitenoise==6.6.0
+gunicorn==21.2.0
+
+# HTTP Requests
+requests==2.31.0 
 
 
 
