@@ -1,6 +1,6 @@
 services:
   - type: web
-    name:  mini-project-backend2
+    name:  mini-project-backend3
     env: docker
     region: oregon  # or your preferred region
     plan: free  # or starter, standard, etc.
@@ -11,7 +11,7 @@ services:
       - key: DEBUG
         value: false
       - key: ALLOWED_HOSTS
-        value: mini-project-backend2.onrender.com
+        value: mini-project-backend3.onrender.com
       - key: DATABASE_URL
         fromDatabase:
           name: mini-projet-db
@@ -20,5 +20,5 @@ services:
 databases:
   - name: mini-projet-db
     plan: free  # or starter
-    databaseName: mini_db
-    user: mini_user
+    databaseName:  mini-projet-db
+    user: mini_projet_db_user
