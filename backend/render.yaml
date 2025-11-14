@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name:  mini-project-backend
+    env: docker
+    region: oregon  # or your preferred region
+    plan: free  # or starter, standard, etc.
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: mini-project-backend.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mini-projet-db
+          property: connectionString
+    
+databases:
+  - name: mini-projet-db
+    plan: free  # or starter
+    databaseName: mini_db
+    user: mini_user
