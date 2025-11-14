@@ -23,15 +23,38 @@ class StudentCourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'student_name', 'course_name']
     
     def get_student_name(self, obj):
-        # Fetch student name from Spring Boot API
+        # Fetch student name from Spring Boot API via Gateway
         try:
-            student_service_url = os.getenv('STUDENT_SERVICE_URL', 'http://localhost:8081')
-            response = requests.get(f"{student_service_url}/api/students/{obj.student_id}", timeout=2)
+            # Use Gateway URL to reach Spring Boot service
+            gateway_url = os.getenv('GATEWAY_URL', 'http://localhost:9091')
+            
+            # GraphQL query to get student by ID
+            query = """
+            query GetStudent($id: ID!) {
+              student(id: $id) {
+                firstName
+                lastName
+              }
+            }
+            """
+            
+            response = requests.post(
+                f"{gateway_url}/graphql",
+                json={
+                    "query": query,
+                    "variables": {"id": str(obj.student_id)}
+                },
+                headers={"Content-Type": "application/json"},
+                timeout=2
+            )
+            
             if response.status_code == 200:
-                student_data = response.json()
-                first_name = student_data.get('firstName', '')
-                last_name = student_data.get('lastName', '')
-                return f"{first_name} {last_name}".strip()
+                data = response.json()
+                if data.get('data') and data['data'].get('student'):
+                    student = data['data']['student']
+                    first_name = student.get('firstName', '')
+                    last_name = student.get('lastName', '')
+                    return f"{first_name} {last_name}".strip()
         except Exception as e:
             # If API call fails, return placeholder
             print(f"Error fetching student name: {e}")

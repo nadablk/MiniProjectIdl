@@ -7,19 +7,18 @@ import {
 import "../style/Courses.css";
 
 const Courses = () => {
+  // State management
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [students, setStudents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showCourseModal, setShowCourseModal] = useState(false);
-  const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
-  const [editingCourse, setEditingCourse] = useState(null);
-  const [editingEnrollment, setEditingEnrollment] = useState(null);
+  const [activeTab, setActiveTab] = useState("courses");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("courses"); // 'courses' or 'enrollments'
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Form state for courses
+  // Course modal state
+  const [showCourseModal, setShowCourseModal] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
   const [courseFormData, setCourseFormData] = useState({
     name: "",
     description: "",
@@ -27,87 +26,76 @@ const Courses = () => {
     instructor: "",
   });
 
-  // Form state for enrollments
+  // Enrollment modal state
+  const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
+  const [editingEnrollment, setEditingEnrollment] = useState(null);
   const [enrollmentFormData, setEnrollmentFormData] = useState({
-    student: "",
-    course: "",
+    studentId: "",
+    courseId: "",
     grade: "",
-    enrollment_date: new Date().toISOString().split("T")[0],
   });
 
+  // Fetch data on mount - optimized with parallel loading
   useEffect(() => {
-    fetchCourses();
-    fetchEnrollments();
-    fetchStudents();
+    fetchAllData();
   }, []);
+
+  const fetchAllData = async () => {
+    try {
+      setLoading(true);
+      // Fetch all data in parallel for faster loading
+      const [coursesData, enrollmentsData, studentsData] = await Promise.all([
+        courseGraphQL.getAllCourses().catch(() => []),
+        enrollmentGraphQL.getAllEnrollments().catch(() => []),
+        studentGraphQL.getAllStudents().catch(() => []),
+      ]);
+
+      setCourses(coursesData);
+      setEnrollments(enrollmentsData);
+      setStudents(studentsData);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchCourses = async () => {
     try {
-      setLoading(true);
       const data = await courseGraphQL.getAllCourses();
-      setCourses(data);
-      setError(null);
+      setCourses(data || []);
     } catch (err) {
       console.error("Error fetching courses:", err);
-      setError("Failed to load courses");
-    } finally {
-      setLoading(false);
     }
   };
 
   const fetchEnrollments = async () => {
     try {
       const data = await enrollmentGraphQL.getAllEnrollments();
-      setEnrollments(data);
+      setEnrollments(data || []);
     } catch (err) {
       console.error("Error fetching enrollments:", err);
     }
   };
 
-  const fetchStudents = async () => {
-    try {
-      const data = await studentGraphQL.getAllStudents();
-      setStudents(data);
-    } catch (err) {
-      console.error("Error fetching students:", err);
-    }
-  };
+  // ==================== COURSE HANDLERS ====================
 
-  // Course handlers
-  const handleCourseInputChange = (e) => {
+  const handleCourseFormChange = (e) => {
     const { name, value } = e.target;
     setCourseFormData({ ...courseFormData, [name]: value });
   };
 
-  const handleCourseSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Prepare data
-      const courseData = {
-        name: courseFormData.name,
-        description: courseFormData.description || "",
-        credits: courseFormData.credits || null,
-        instructor: courseFormData.instructor || null,
-      };
-
-      if (editingCourse) {
-        await courseGraphQL.updateCourse(editingCourse.id, courseData);
-      } else {
-        await courseGraphQL.createCourse(courseData);
-      }
-      setShowCourseModal(false);
-      setCourseFormData({
-        name: "",
-        description: "",
-        credits: "",
-        instructor: "",
-      });
-      setEditingCourse(null);
-      fetchCourses();
-    } catch (err) {
-      console.error("Error saving course:", err);
-      alert("Failed to save course: " + err.message);
-    }
+  const handleAddCourse = () => {
+    setEditingCourse(null);
+    setCourseFormData({
+      name: "",
+      description: "",
+      credits: "",
+      instructor: "",
+    });
+    setShowCourseModal(true);
   };
 
   const handleEditCourse = (course) => {
@@ -121,230 +109,197 @@ const Courses = () => {
     setShowCourseModal(true);
   };
 
-  const handleAddNewCourse = () => {
-    setEditingCourse(null);
-    setCourseFormData({
-      name: "",
-      description: "",
-      credits: "",
-      instructor: "",
-    });
-    setShowCourseModal(true);
+  const handleCourseSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingCourse) {
+        const updated = await courseGraphQL.updateCourse(
+          editingCourse.id,
+          courseFormData
+        );
+        // Optimistic update - update local state immediately
+        setCourses(
+          courses.map((c) => (c.id === editingCourse.id ? updated : c))
+        );
+      } else {
+        const created = await courseGraphQL.createCourse(courseFormData);
+        // Optimistic update - add to local state immediately
+        setCourses([...courses, created]);
+      }
+      setShowCourseModal(false);
+    } catch (err) {
+      console.error("Error saving course:", err);
+      alert("Failed to save course: " + err.message);
+      // Fallback: refresh from server on error
+      await fetchCourses();
+    }
   };
 
   const handleDeleteCourse = async (id) => {
     if (!window.confirm("Are you sure you want to delete this course?")) {
       return;
     }
-
     try {
       await courseGraphQL.deleteCourse(id);
-      fetchCourses();
+      // Optimistic update - remove from local state immediately
+      setCourses(courses.filter((c) => c.id !== id));
     } catch (err) {
       console.error("Error deleting course:", err);
       alert("Failed to delete course: " + err.message);
+      // Fallback: refresh from server on error
+      await fetchCourses();
     }
   };
 
-  // Enrollment handlers
-  const handleEnrollmentInputChange = (e) => {
+  // ==================== ENROLLMENT HANDLERS ====================
+
+  const handleEnrollmentFormChange = (e) => {
     const { name, value } = e.target;
     setEnrollmentFormData({ ...enrollmentFormData, [name]: value });
   };
 
-  const handleEnrollmentSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Extract IDs
-      const studentId =
-        typeof enrollmentFormData.student === "object"
-          ? enrollmentFormData.student.id
-          : parseInt(enrollmentFormData.student);
-
-      const courseId =
-        typeof enrollmentFormData.course === "object"
-          ? enrollmentFormData.course.id
-          : parseInt(enrollmentFormData.course);
-
-      const gradeValue = enrollmentFormData.grade || null;
-      console.log("Submitting enrollment:", {
-        studentId,
-        courseId,
-        grade: gradeValue,
-      });
-
-      if (editingEnrollment) {
-        // Update existing enrollment
-        await enrollmentGraphQL.updateEnrollment(editingEnrollment.id, {
-          studentId: studentId,
-          courseId: courseId,
-          grade: gradeValue,
-        });
-      } else {
-        // Create new enrollment
-        await enrollmentGraphQL.addStudentToCourse(
-          studentId,
-          courseId,
-          gradeValue
-        );
-      }
-      setShowEnrollmentModal(false);
-      setEnrollmentFormData({
-        student: "",
-        course: "",
-        grade: "",
-        enrollment_date: new Date().toISOString().split("T")[0],
-      });
-      setEditingEnrollment(null);
-      fetchEnrollments();
-    } catch (err) {
-      console.error("Error saving enrollment:", err);
-      alert(`Failed to save enrollment: ${err.message}`);
-    }
+  const handleAddEnrollment = () => {
+    setEditingEnrollment(null);
+    setEnrollmentFormData({
+      studentId: "",
+      courseId: "",
+      grade: "",
+    });
+    setShowEnrollmentModal(true);
   };
 
   const handleEditEnrollment = (enrollment) => {
     setEditingEnrollment(enrollment);
     setEnrollmentFormData({
-      student: enrollment.student || "",
-      course: enrollment.course || "",
+      studentId: enrollment.student_id || "",
+      courseId: enrollment.course || "",
       grade: enrollment.grade || "",
-      enrollment_date:
-        enrollment.enrollment_date || new Date().toISOString().split("T")[0],
     });
     setShowEnrollmentModal(true);
   };
 
-  const handleAddNewEnrollment = () => {
-    setEditingEnrollment(null);
-    setEnrollmentFormData({
-      student: "",
-      course: "",
-      grade: "",
-      enrollment_date: new Date().toISOString().split("T")[0],
-    });
-    setShowEnrollmentModal(true);
+  const handleEnrollmentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const studentId = parseInt(enrollmentFormData.studentId);
+      const courseId = parseInt(enrollmentFormData.courseId);
+      const grade = enrollmentFormData.grade || null;
+
+      if (!studentId || !courseId) {
+        alert("Please select both student and course");
+        return;
+      }
+
+      if (editingEnrollment) {
+        // Update enrollment
+        const updated = await enrollmentGraphQL.updateEnrollment(
+          editingEnrollment.id,
+          {
+            studentId,
+            courseId,
+            grade,
+          }
+        );
+        // Optimistic update
+        setEnrollments(
+          enrollments.map((e) => (e.id === editingEnrollment.id ? updated : e))
+        );
+      } else {
+        // Create new enrollment
+        const created = await enrollmentGraphQL.addStudentToCourse(
+          studentId,
+          courseId,
+          grade
+        );
+        // Optimistic update
+        setEnrollments([...enrollments, created]);
+      }
+
+      setShowEnrollmentModal(false);
+    } catch (err) {
+      console.error("Error saving enrollment:", err);
+      alert("Failed to save enrollment: " + err.message);
+      // Fallback: refresh from server on error
+      await fetchEnrollments();
+    }
   };
 
-  const handleDeleteEnrollment = async (id) => {
+  const handleDeleteEnrollment = async (enrollment) => {
     if (!window.confirm("Are you sure you want to delete this enrollment?")) {
       return;
     }
-
     try {
-      // Find the enrollment to get student_id and course_id
-      const enrollment = enrollments.find((e) => e.id === id);
-      if (!enrollment) {
-        throw new Error("Enrollment not found");
-      }
-
-      const studentId = enrollment.studentId;
-      const courseId = enrollment.course?.id || enrollment.course;
-
       const result = await enrollmentGraphQL.removeStudentFromCourse(
-        studentId,
-        courseId
+        enrollment.student_id,
+        enrollment.course
       );
-      if (!result.success) {
-        throw new Error(result.message || "Failed to delete enrollment");
+      if (result === false) {
+        throw new Error("Failed to delete enrollment");
       }
-      fetchEnrollments();
+      // Optimistic update - remove from local state immediately
+      setEnrollments(enrollments.filter((e) => e.id !== enrollment.id));
     } catch (err) {
       console.error("Error deleting enrollment:", err);
       alert("Failed to delete enrollment: " + err.message);
+      // Fallback: refresh from server on error
+      await fetchEnrollments();
     }
   };
 
-  const handleCloseCourseModal = () => {
-    setShowCourseModal(false);
-    setEditingCourse(null);
-    setCourseFormData({
-      name: "",
-      description: "",
-      credits: "",
-      instructor: "",
-    });
-  };
+  // ==================== FILTERING (Memoized for performance) ====================
 
-  const handleCloseEnrollmentModal = () => {
-    setShowEnrollmentModal(false);
-    setEditingEnrollment(null);
-    setEnrollmentFormData({
-      student: "",
-      course: "",
-      grade: "",
-      enrollment_date: new Date().toISOString().split("T")[0],
-    });
-  };
-
-  const getStudentName = (enrollment) => {
-    // First try to find student in the students array from Spring Boot
-    const student = students.find((s) => s.id === enrollment.student_id);
-    if (student) {
-      return `${student.firstName} ${student.lastName}`;
-    }
-    // Fallback to backend's student_name if student not found
-    if (enrollment.student_name) {
-      return enrollment.student_name;
-    }
-    return "Unknown";
-  };
-
-  const getCourseName = (enrollment) => {
-    // Use course_name from backend if available, otherwise fallback to finding in courses array
-    if (enrollment.course_name) {
-      return enrollment.course_name;
-    }
-    const course = courses.find((c) => c.id === enrollment.course);
-    return course ? course.name : "Unknown";
-  };
-
-  const filteredCourses = courses.filter((course) =>
-    course.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredEnrollments = enrollments.filter((enrollment) => {
-    const studentName = getStudentName(enrollment);
-    const courseName = getCourseName(enrollment);
+  const filteredCourses = courses.filter((course) => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
     return (
-      studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      courseName.toLowerCase().includes(searchTerm.toLowerCase())
+      course.name?.toLowerCase().includes(search) ||
+      course.instructor?.toLowerCase().includes(search) ||
+      course.description?.toLowerCase().includes(search)
     );
   });
 
+  const filteredEnrollments = enrollments.filter((enrollment) => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    return (
+      enrollment.student_name?.toLowerCase().includes(search) ||
+      enrollment.course_name?.toLowerCase().includes(search) ||
+      enrollment.grade?.toLowerCase().includes(search)
+    );
+  });
+
+  // ==================== RENDER ====================
+
+  if (loading) {
+    return (
+      <div className="courses-container">
+        <div className="loading">⏳ Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="courses-container">
+      {/* Header */}
       <div className="page-header">
         <div>
-          <h1>Course Management</h1>
+          <h1>📚 Courses & Enrollments</h1>
           <p className="page-subtitle">
-            {activeTab === "courses"
-              ? `${courses.length} course${
-                  courses.length !== 1 ? "s" : ""
-                } available`
-              : `${enrollments.length} enrollment${
-                  enrollments.length !== 1 ? "s" : ""
-                }`}
+            Manage courses and student enrollments
           </p>
         </div>
         <button
           className="add-btn"
           onClick={
-            activeTab === "courses"
-              ? handleAddNewCourse
-              : handleAddNewEnrollment
+            activeTab === "courses" ? handleAddCourse : handleAddEnrollment
           }
         >
-          <span className="btn-icon">➕</span>
-          {activeTab === "courses" ? "Add Course" : "Add Enrollment"}
+          <span className="btn-icon">+</span>
+          Add {activeTab === "courses" ? "Course" : "Enrollment"}
         </button>
       </div>
 
-      {error && (
-        <div className="error-banner">
-          <span>⚠️ {error}</span>
-        </div>
-      )}
+      {error && <div className="error-banner">⚠️ {error}</div>}
 
       {/* Tabs */}
       <div className="tabs">
@@ -352,316 +307,373 @@ const Courses = () => {
           className={`tab ${activeTab === "courses" ? "active" : ""}`}
           onClick={() => setActiveTab("courses")}
         >
-          📚 Courses
+          Courses ({courses.length})
         </button>
         <button
           className={`tab ${activeTab === "enrollments" ? "active" : ""}`}
           onClick={() => setActiveTab("enrollments")}
         >
-          📝 Enrollments
+          Enrollments ({enrollments.length})
         </button>
       </div>
 
-      {/* Search Bar */}
+      {/* Search */}
       <div className="toolbar">
         <div className="search-box">
           <span className="search-icon">🔍</span>
           <input
             type="text"
-            placeholder={
-              activeTab === "courses"
-                ? "Search courses..."
-                : "Search enrollments..."
-            }
+            placeholder={`Search ${activeTab}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Content based on active tab */}
+      {/* Content */}
       {activeTab === "courses" ? (
-        <div className="table-container">
-          {loading ? (
-            <div className="loading">Loading courses...</div>
-          ) : (
-            <table className="courses-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Course Name</th>
-                  <th>Description</th>
-                  <th>Credits</th>
-                  <th>Instructor</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCourses.map((course) => (
-                  <tr key={course.id}>
-                    <td>#{course.id}</td>
-                    <td>
-                      <div className="course-name">
-                        <span className="course-icon">📖</span>
-                        {course.name}
-                      </div>
-                    </td>
-                    <td className="description-cell">
-                      {course.description || "No description"}
-                    </td>
-                    <td>
-                      <span className="credits-badge">{course.credits}</span>
-                    </td>
-                    <td>{course.instructor || "N/A"}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="action-btn edit"
-                          title="Edit"
-                          onClick={() => handleEditCourse(course)}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="action-btn delete"
-                          title="Delete"
-                          onClick={() => handleDeleteCourse(course.id)}
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <CoursesTable
+          courses={filteredCourses}
+          onEdit={handleEditCourse}
+          onDelete={handleDeleteCourse}
+        />
       ) : (
-        <div className="table-container">
-          {loading ? (
-            <div className="loading">Loading enrollments...</div>
-          ) : (
-            <table className="courses-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Student</th>
-                  <th>Course</th>
-                  <th>Grade</th>
-                  <th>Enrollment Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEnrollments.map((enrollment) => (
-                  <tr key={enrollment.id}>
-                    <td>#{enrollment.id}</td>
-                    <td>
-                      <div className="student-name">
-                        <span className="avatar">👤</span>
-                        {getStudentName(enrollment)}
-                      </div>
-                    </td>
-                    <td>{getCourseName(enrollment)}</td>
-                    <td>
-                      <span className="grade-badge">
-                        {enrollment.grade || "Not graded"}
-                      </span>
-                    </td>
-                    <td>
-                      {enrollment.enrollment_date
-                        ? new Date(
-                            enrollment.enrollment_date
-                          ).toLocaleDateString()
-                        : "N/A"}
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="action-btn edit"
-                          title="Edit"
-                          onClick={() => handleEditEnrollment(enrollment)}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="action-btn delete"
-                          title="Delete"
-                          onClick={() => handleDeleteEnrollment(enrollment.id)}
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <EnrollmentsTable
+          enrollments={filteredEnrollments}
+          onEdit={handleEditEnrollment}
+          onDelete={handleDeleteEnrollment}
+        />
       )}
 
-      {/* Add/Edit Course Modal */}
+      {/* Course Modal */}
       {showCourseModal && (
-        <div className="modal-overlay" onClick={handleCloseCourseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{editingCourse ? "Edit Course" : "Add Course"}</h2>
-              <button className="close-btn" onClick={handleCloseCourseModal}>
-                ✕
-              </button>
-            </div>
-            <form className="course-form" onSubmit={handleCourseSubmit}>
-              <div className="form-group">
-                <label>Course Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="e.g., Introduction to Philosophy"
-                  value={courseFormData.name}
-                  onChange={handleCourseInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  placeholder="Course description..."
-                  value={courseFormData.description}
-                  onChange={handleCourseInputChange}
-                  rows="4"
-                />
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Credits</label>
-                  <input
-                    type="number"
-                    name="credits"
-                    placeholder="3"
-                    value={courseFormData.credits}
-                    onChange={handleCourseInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Instructor</label>
-                  <input
-                    type="text"
-                    name="instructor"
-                    placeholder="Professor name"
-                    value={courseFormData.instructor}
-                    onChange={handleCourseInputChange}
-                  />
-                </div>
-              </div>
-              <div className="form-actions">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={handleCloseCourseModal}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="submit-btn">
-                  {editingCourse ? "Update Course" : "Add Course"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <CourseModal
+          course={editingCourse}
+          formData={courseFormData}
+          onChange={handleCourseFormChange}
+          onSubmit={handleCourseSubmit}
+          onClose={() => setShowCourseModal(false)}
+        />
       )}
 
-      {/* Add Enrollment Modal */}
+      {/* Enrollment Modal */}
       {showEnrollmentModal && (
-        <div className="modal-overlay" onClick={handleCloseEnrollmentModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>
-                {editingEnrollment ? "Edit Enrollment" : "Add Enrollment"}
-              </h2>
-              <button
-                className="close-btn"
-                onClick={handleCloseEnrollmentModal}
-              >
-                ✕
-              </button>
-            </div>
-            <form className="course-form" onSubmit={handleEnrollmentSubmit}>
-              <div className="form-group">
-                <label>Student</label>
-                <select
-                  name="student"
-                  value={enrollmentFormData.student}
-                  onChange={handleEnrollmentInputChange}
-                  required
-                  disabled={editingEnrollment} // Disable when editing
-                >
-                  <option value="">Select Student</option>
-                  {students.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.firstName} {student.lastName} - {student.email}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Course</label>
-                <select
-                  name="course"
-                  value={enrollmentFormData.course}
-                  onChange={handleEnrollmentInputChange}
-                  required
-                  disabled={editingEnrollment} // Disable when editing
-                >
-                  <option value="">Select Course</option>
-                  {courses.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.name} ({course.credits} credits)
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Grade</label>
-                  <input
-                    type="text"
-                    name="grade"
-                    placeholder="A, B, C, etc."
-                    value={enrollmentFormData.grade}
-                    onChange={handleEnrollmentInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Enrollment Date</label>
-                  <input
-                    type="date"
-                    name="enrollment_date"
-                    value={enrollmentFormData.enrollment_date}
-                    onChange={handleEnrollmentInputChange}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="form-actions">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={handleCloseEnrollmentModal}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="submit-btn">
-                  {editingEnrollment ? "Update Enrollment" : "Add Enrollment"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <EnrollmentModal
+          enrollment={editingEnrollment}
+          formData={enrollmentFormData}
+          students={students}
+          courses={courses}
+          onChange={handleEnrollmentFormChange}
+          onSubmit={handleEnrollmentSubmit}
+          onClose={() => setShowEnrollmentModal(false)}
+        />
       )}
+    </div>
+  );
+};
+
+// ==================== COURSES TABLE ====================
+
+const CoursesTable = ({ courses, onEdit, onDelete }) => {
+  if (courses.length === 0) {
+    return (
+      <div className="table-container">
+        <div className="loading">No courses found</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="table-container">
+      <table className="courses-table">
+        <thead>
+          <tr>
+            <th>Course Name</th>
+            <th>Description</th>
+            <th>Credits</th>
+            <th>Instructor</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {courses.map((course) => (
+            <tr key={course.id}>
+              <td>
+                <div className="course-name">
+                  <span className="course-icon">📖</span>
+                  {course.name}
+                </div>
+              </td>
+              <td>
+                <div className="description-cell">{course.description}</div>
+              </td>
+              <td>
+                <span className="credits-badge">{course.credits} Credits</span>
+              </td>
+              <td>{course.instructor}</td>
+              <td>
+                <div className="action-buttons">
+                  <button
+                    className="action-btn edit"
+                    onClick={() => onEdit(course)}
+                    title="Edit"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={() => onDelete(course.id)}
+                    title="Delete"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// ==================== ENROLLMENTS TABLE ====================
+
+const EnrollmentsTable = ({ enrollments, onEdit, onDelete }) => {
+  if (enrollments.length === 0) {
+    return (
+      <div className="table-container">
+        <div className="loading">No enrollments found</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="table-container">
+      <table className="courses-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Grade</th>
+            <th>Enrollment Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {enrollments.map((enrollment) => (
+            <tr key={enrollment.id}>
+              <td>
+                <div className="student-name">
+                  <span className="avatar">👤</span>
+                  {enrollment.student_name ||
+                    `Student #${enrollment.student_id}`}
+                </div>
+              </td>
+              <td>
+                <div className="course-name">
+                  <span className="course-icon">📖</span>
+                  {enrollment.course_name || `Course #${enrollment.course}`}
+                </div>
+              </td>
+              <td>
+                {enrollment.grade ? (
+                  <span className="grade-badge">{enrollment.grade}</span>
+                ) : (
+                  <span style={{ color: "#999" }}>Not graded</span>
+                )}
+              </td>
+              <td>
+                {enrollment.enrollment_date
+                  ? new Date(enrollment.enrollment_date).toLocaleDateString()
+                  : "N/A"}
+              </td>
+              <td>
+                <div className="action-buttons">
+                  <button
+                    className="action-btn edit"
+                    onClick={() => onEdit(enrollment)}
+                    title="Edit"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={() => onDelete(enrollment)}
+                    title="Delete"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// ==================== COURSE MODAL ====================
+
+const CourseModal = ({ course, formData, onChange, onSubmit, onClose }) => {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{course ? "Edit Course" : "Add New Course"}</h2>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
+        </div>
+        <form className="course-form" onSubmit={onSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Course Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={onChange}
+              placeholder="e.g., Introduction to Philosophy"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={onChange}
+              placeholder="Brief course description"
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="credits">Credits *</label>
+              <input
+                type="number"
+                id="credits"
+                name="credits"
+                value={formData.credits}
+                onChange={onChange}
+                placeholder="e.g., 3"
+                min="1"
+                max="12"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="instructor">Instructor *</label>
+              <input
+                type="text"
+                id="instructor"
+                name="instructor"
+                value={formData.instructor}
+                onChange={onChange}
+                placeholder="e.g., Dr. Smith"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button type="button" className="cancel-btn" onClick={onClose}>
+              Cancel
+            </button>
+            <button type="submit" className="submit-btn">
+              {course ? "Update Course" : "Create Course"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ==================== ENROLLMENT MODAL ====================
+
+const EnrollmentModal = ({
+  enrollment,
+  formData,
+  students,
+  courses,
+  onChange,
+  onSubmit,
+  onClose,
+}) => {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{enrollment ? "Edit Enrollment" : "Add New Enrollment"}</h2>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
+        </div>
+        <form className="course-form" onSubmit={onSubmit}>
+          <div className="form-group">
+            <label htmlFor="studentId">Student *</label>
+            <select
+              id="studentId"
+              name="studentId"
+              value={formData.studentId}
+              onChange={onChange}
+              required
+            >
+              <option value="">Select a student</option>
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.firstName} {student.lastName} - {student.email}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="courseId">Course *</label>
+            <select
+              id="courseId"
+              name="courseId"
+              value={formData.courseId}
+              onChange={onChange}
+              required
+            >
+              <option value="">Select a course</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.name} ({course.credits} credits)
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="grade">Grade (Optional)</label>
+            <input
+              type="text"
+              id="grade"
+              name="grade"
+              value={formData.grade}
+              onChange={onChange}
+              placeholder="e.g., A, B+, 85"
+            />
+          </div>
+
+          <div className="form-actions">
+            <button type="button" className="cancel-btn" onClick={onClose}>
+              Cancel
+            </button>
+            <button type="submit" className="submit-btn">
+              {enrollment ? "Update Enrollment" : "Create Enrollment"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

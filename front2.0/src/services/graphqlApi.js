@@ -23,28 +23,36 @@ const GRAPHQL_ENDPOINT = API_CONFIG.GRAPHQL_ENDPOINT;
  * @returns {Promise} - Response data
  */
 const graphqlRequest = async (endpoint, query, variables = {}) => {
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  });
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
+    });
 
-  if (!response.ok) {
-    throw new Error(`GraphQL request failed: ${response.statusText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `GraphQL request failed (${response.status}): ${errorText}`
+      );
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error("GraphQL Request Error:", error);
+    throw error;
   }
-
-  const result = await response.json();
-
-  if (result.errors) {
-    throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
-  }
-
-  return result.data;
 };
 
 // ==================== STUDENT QUERIES ====================

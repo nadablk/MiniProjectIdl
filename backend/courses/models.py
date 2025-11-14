@@ -196,11 +196,11 @@ class StudentCourse(models.Model):
 class SharedTable(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    student_id = models.IntegerField(foreign_key=True)
+    student_id = models.IntegerField()
     course_id = models.IntegerField()
     enrollment_date = models.DateTimeField()
     status = models.CharField(max_length=50)
-    grade= models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     attendance_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField()

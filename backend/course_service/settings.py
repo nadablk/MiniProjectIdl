@@ -48,7 +48,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -108,10 +107,10 @@ WSGI_APPLICATION = 'course_service.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mini_projet_db',        
-        'USER': 'mini_projet_db_user',           
-        'PASSWORD': 'NWfmn6MF1VHbF90hDLHpn0WkKN3ssCYM',
-        'HOST': 'dpg-d4b2n0he2q1c73bc4srg-a.oregon-postgres.render.com',
+        'NAME': 'CourseServiceDB',        
+        'USER': 'postgres',           
+        'PASSWORD': 'Its#me@yes.com',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }

@@ -12,6 +12,8 @@ import Dashboard from "./admin/pages/dashboard";
 import Students from "./admin/pages/Students";
 import Universities from "./admin/pages/Universities";
 import Courses from "./admin/pages/Courses";
+import Home from "./student/Home";
+import Chatbot from "./student/Chatbot";
 import "./App.css";
 
 function App() {
@@ -38,7 +40,27 @@ function App() {
             <Route path="courses" element={<Courses />} />
           </Route>
 
-          {/* Student routes will be added in step 3 */}
+          {/* Student routes */}
+          <Route
+            path="/student/home"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/chatbot"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <Chatbot />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student"
+            element={<Navigate to="/student/home" replace />}
+          />
         </Routes>
       </Router>
     </AuthProvider>
