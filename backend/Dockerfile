@@ -30,7 +30,10 @@ RUN python manage.py collectstatic --noinput || true
 EXPOSE 9090
 
 # Run migrations and start server with gunicorn
-CMD sh -c "echo 'Running migrations...' && \
-python manage.py migrate --noinput && \
-echo 'Migrations complete. Starting gunicorn...' && \
-gunicorn course_service.wsgi:application --bind 0.0.0.0:9090 --workers 2 --timeout 120 --access-logfile - --error-logfile - --log-level debug"
+CMD sh -c "set -e && \
+echo '[1/3] Starting startup sequence...' && \
+python manage.py check && \
+echo '[2/3] Running migrations...' && \
+python manage.py migrate --noinput || true && \
+echo '[3/3] Starting gunicorn server on 0.0.0.0:9090' && \
+exec gunicorn course_service.wsgi:application --bind 0.0.0.0:9090 --workers 2 --timeout 120 --access-logfile - --error-logfile - --log-level info"
