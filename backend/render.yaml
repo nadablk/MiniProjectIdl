@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /graphql/
+    healthCheckPath: /health/
     envVars:
       - key: SECRET_KEY
         generateValue: true
