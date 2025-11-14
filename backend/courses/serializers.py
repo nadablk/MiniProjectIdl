@@ -23,37 +23,22 @@ class StudentCourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'student_name', 'course_name']
     
     def get_student_name(self, obj):
-        # Fetch student name from Spring Boot API via Gateway
+        # Fetch student name from Spring Boot API directly
         try:
-            # Use Gateway URL to reach Spring Boot service
-            gateway_url = os.getenv('GATEWAY_URL', 'http://localhost:9091')
+            # Use Spring Boot API directly (works in both local and deployed environments)
+            spring_boot_url = os.getenv('SPRING_BOOT_URL', 'https://miniprojectidl-13.onrender.com')
             
-            # GraphQL query to get student by ID
-            query = """
-            query GetStudent($id: ID!) {
-              student(id: $id) {
-                firstName
-                lastName
-              }
-            }
-            """
-            
-            response = requests.post(
-                f"{gateway_url}/graphql",
-                json={
-                    "query": query,
-                    "variables": {"id": str(obj.student_id)}
-                },
+            response = requests.get(
+                f"{spring_boot_url}/api/students/{obj.student_id}",
                 headers={"Content-Type": "application/json"},
-                timeout=2
+                timeout=5
             )
             
             if response.status_code == 200:
-                data = response.json()
-                if data.get('data') and data['data'].get('student'):
-                    student = data['data']['student']
-                    first_name = student.get('firstName', '')
-                    last_name = student.get('lastName', '')
+                student = response.json()
+                first_name = student.get('firstName', '')
+                last_name = student.get('lastName', '')
+                if first_name or last_name:
                     return f"{first_name} {last_name}".strip()
         except Exception as e:
             # If API call fails, return placeholder
