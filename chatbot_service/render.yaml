@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: chatbot-service-idl
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health/
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: ALLOWED_HOSTS
+        value: "chatbot-service-idl.onrender.com,localhost,127.0.0.1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chatbot-db
+          property: connectionString
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PYTHONDONTWRITEBYTECODE
+        value: "1"
+      - key: TRANSFORMERS_CACHE
+        value: "/app/models_cache"
+      - key: HF_HOME
+        value: "/app/models_cache"
+
+databases:
+  - name: chatbot-db
+    plan: free
+    databaseName: chatbot_db
+    user: chatbot_db_user

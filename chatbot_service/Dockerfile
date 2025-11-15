@@ -37,5 +37,11 @@ RUN python manage.py collectstatic --noinput || true
 # Expose port
 EXPOSE 8002
 
-# Run migrations and start server
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8002
+# Run migrations and start server with gunicorn
+CMD sh -c "set -e && \
+echo '[1/3] Starting chatbot service...' && \
+python manage.py check && \
+echo '[2/3] Running migrations...' && \
+python manage.py migrate --noinput || true && \
+echo '[3/3] Starting gunicorn server on 0.0.0.0:8002' && \
+exec gunicorn chatbot_config.wsgi:application --bind 0.0.0.0:8002 --workers 2 --timeout 120 --access-logfile - --error-logfile - --log-level info"

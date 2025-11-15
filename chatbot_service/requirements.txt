@@ -1,6 +1,27 @@
-Django==4.2.7
+# Core Django & ASGI
+asgiref==3.10.0
+Django==5.2.7
+sqlparse==0.5.3
+tzdata==2025.2
+
+# Database
+psycopg2-binary==2.9.11
+dj-database-url==3.0.1
+
+# Configuration
+python-decouple==3.7
+
+# REST Framework & Serialization
 djangorestframework==3.14.0
-django-cors-headers==4.3.1
+
+# CORS
+Django-cors-headers==4.3.1
+
+# Static Files & Production
+whitenoise==6.6.0
+gunicorn==21.2.0
+
+# AI/ML Libraries
 transformers>=4.35.2
 torch>=2.6.0
 torchvision>=0.21.0
