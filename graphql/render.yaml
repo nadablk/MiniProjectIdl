@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: graphql-gateway
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "9000"
+      - key: NODE_ENV
+        value: "production"
+      - key: STUDENT_BASE
+        value: "https://miniprojectidl-13.onrender.com/api"
+      - key: COURSE_BASE
+        value: "https://mini-project-backend11.onrender.com/api"
+      - key: AI_BASE
+        value: "https://chatbot-service.onrender.com/api"

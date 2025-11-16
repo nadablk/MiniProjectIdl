@@ -16,12 +16,16 @@ COPY . .
 # Expose port
 EXPOSE 9000
 
-# Set environment variables (can be overridden by Render)
+# Environment variables (will be overridden by Render render.yaml)
 ENV PORT=9000
+ENV NODE_ENV=production
 ENV STUDENT_BASE=http://localhost:8081/api
 ENV COURSE_BASE=http://localhost:9090/api
 ENV AI_BASE=http://localhost:8002/api
-ENV NODE_ENV=production
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:9000/', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
