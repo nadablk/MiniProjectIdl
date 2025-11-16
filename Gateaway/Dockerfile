@@ -28,10 +28,11 @@ EXPOSE 9091
 
 # Set environment variables (can be overridden by Render)
 ENV SERVER_PORT=9091
-ENV GRAPHQL_SERVICE_URL=http://localhost:9000/graphql
-ENV STUDENT_SERVICE_URL=http://localhost:8081
-ENV COURSE_SERVICE_URL=http://localhost:9090
-ENV CHATBOT_SERVICE_URL=http://localhost:8002
+ENV GRAPHQL_SERVICE_URL=https://graphql-service-qzpq.onrender.com/graphql
+# ENV STUDENT_SERVICE_URL=http://localhost:8081
+# ENV COURSE_SERVICE_URL=http://localhost:9090
+# ENV CHATBOT_SERVICE_URL=http://localhost:8002
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

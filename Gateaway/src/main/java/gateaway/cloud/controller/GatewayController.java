@@ -20,11 +20,8 @@ public class GatewayController {
         health.put("service", "API Gateway");
         health.put("timestamp", LocalDateTime.now().toString());
         health.put("routes", Map.of(
-            "students", "/api/students/** → Spring Boot (localhost:8081)",
-            "universities", "/api/universities/** → Spring Boot (localhost:8081)",
-            "courses", "/api/courses/** → Django (192.168.117.225:9090)",
-            "enrollments", "/api/enrollments/** → Django (192.168.117.225:9090)",
-            "graphql", "/graphql/** → Spring Boot (localhost:8081)"
+            "graphql", "/graphql/** → GraphQL Gateway (https://graphql-service-qzpq.onrender.com)",
+            "note", "All queries go through GraphQL which routes to: Spring Boot API (https://miniprojectidl-13.onrender.com/api), Django API (https://mini-project-backend11.onrender.com/api)"
         ));
         return ResponseEntity.ok(health);
     }
@@ -34,9 +31,10 @@ public class GatewayController {
         Map<String, String> info = new HashMap<>();
         info.put("name", "API Gateway");
         info.put("version", "1.0.0");
-        info.put("description", "Central API Gateway for Student Management System");
-        info.put("port", "8080");
-        info.put("backends", "Spring Boot (8081) + Django (9090)");
+        info.put("description", "Central API Gateway routing to GraphQL Service");
+        info.put("port", "9091");
+        info.put("graphql_service", "https://graphql-service-qzpq.onrender.com");
+        info.put("architecture", "Gateway → GraphQL → (Spring Boot API + Django API + Chatbot API)");
         return ResponseEntity.ok(info);
     }
 }
