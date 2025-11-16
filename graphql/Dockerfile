@@ -19,8 +19,8 @@ EXPOSE 9000
 # Environment variables (will be overridden by Render render.yaml)
 ENV PORT=9000
 ENV NODE_ENV=production
-ENV STUDENT_BASE=http://localhost:8081/api
-ENV COURSE_BASE=http://localhost:9090/api
+ENV STUDENT_BASE=https://miniprojectidl-13.onrender.com/api
+ENV COURSE_BASE=https://mini-project-backend11.onrender.com/api
 ENV AI_BASE=http://localhost:8002/api
 
 # Health check
