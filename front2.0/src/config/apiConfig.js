@@ -1,17 +1,20 @@
 // ===================================================================
-// API Configuration - GATEWAY ONLY
+// API Configuration - Direct GraphQL
 // ===================================================================
-// All requests go through the Gateway on port 9091
-// The Gateway routes to GraphQL (port 9000) which connects to all services
+// Direct connection to GraphQL service (bypassing Gateway due to cold start issues)
+// GraphQL service connects to all backend services (Spring Boot, Django, Chatbot)
 // ===================================================================
 
 export const API_CONFIG = {
-  // Single GraphQL endpoint through Gateway
-  GRAPHQL_ENDPOINT: "https://gateaway-service1.onrender.com/graphql",
-    // GRAPHQL_ENDPOINT: "http://localhost:9091/graphql",
-
-
+  // Direct GraphQL endpoint - faster, no cold start delays
+  GRAPHQL_ENDPOINT: "https://graphql-service-qzpq.onrender.com/graphql",
+  
+  // Alternative endpoints (commented out):
+  // GRAPHQL_ENDPOINT: "https://gateaway-service1.onrender.com/graphql", // Gateway (has timeout issues)
+  // GRAPHQL_ENDPOINT: "http://localhost:9000/graphql", // Local GraphQL
 };
 
-// For deployment or network access, change to:
-// GRAPHQL_ENDPOINT: "http://YOUR_IP:9091/graphql"
+// The GraphQL service routes to:
+// - Spring Boot: https://miniprojectidl-13.onrender.com/api (Students, Universities)
+// - Django: https://mini-project-backend11.onrender.com/api (Courses, Enrollments)
+// - Chatbot: [to be deployed] (Translation, Summarization)
