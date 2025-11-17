@@ -7,7 +7,10 @@
 
 export const API_CONFIG = {
   // Single GraphQL endpoint through Gateway
-  GRAPHQL_ENDPOINT: "http://localhost:9091/graphql",
+  GRAPHQL_ENDPOINT: "https://gateaway-service1.onrender.com/graphql",
+    // GRAPHQL_ENDPOINT: "http://localhost:9091/graphql",
+
+
 };
 
 // For deployment or network access, change to:

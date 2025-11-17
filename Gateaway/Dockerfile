@@ -14,8 +14,8 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+# Runtime stage - Use full JRE instead of Alpine for better compatibility
+FROM eclipse-temurin:21-jre
 
 # Set working directory
 WORKDIR /app
@@ -26,10 +26,13 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose port
 EXPOSE 9091
 
-# Set environment variables (can be overridden by Render)
+# Set environment variables
 ENV SERVER_PORT=9091
-ENV GRAPHQL_SERVICE_URL=https://graphql-service-qzpq.onrender.com
+ENV GRAPHQL_SERVICE_URL=https://graphql-service-qzpq.onrender.com/graphql
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:9091/gateway/health || exit 1
 
+# Run the application with optimized JVM settings for Render free tier
+ENTRYPOINT ["java", "-Xmx512m", "-Xms256m", "-jar", "app.jar"]
