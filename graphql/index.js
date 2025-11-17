@@ -534,20 +534,26 @@ const resolvers = {
 };
 
 // Start Apollo Server
-// CORS is disabled here because Spring Gateway (port 9091) handles CORS
-// The Gateway sits in front of this GraphQL server
+// CORS enabled to allow direct frontend access (bypassing Gateway due to timeout issues)
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   csrfPrevention: true,
   cache: "bounded",
-  cors: false, // Disable CORS - handled by Spring Gateway
+  cors: {
+    origin: [
+      "https://front-end-service-aov6.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ],
+    credentials: true,
+  },
 });
 
 server.listen({ port: PORT }).then(({ url }) => {
-  console.log(`🚀 GraphQL Gateway running at ${url}`);
+  console.log(`🚀 GraphQL Server running at ${url}`);
   console.log(`📍 Student Service: ${STUDENT_BASE}`);
   console.log(`📍 Course Service: ${COURSE_BASE}`);
   console.log(`📍 AI Service: ${AI_BASE}`);
-  console.log(`⚠️  CORS handled by Spring Gateway (port 9091)`);
+  console.log(`✅ CORS enabled for frontend access`);
 });
