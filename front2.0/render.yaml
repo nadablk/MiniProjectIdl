@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: philosophe-frontend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: "production"
