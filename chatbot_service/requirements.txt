@@ -4,9 +4,8 @@ Django==5.2.7
 sqlparse==0.5.3
 tzdata==2025.2
 
-# Database
+# Database - PostgreSQL
 psycopg2-binary==2.9.11
-dj-database-url==3.0.1
 
 # Configuration
 python-decouple==3.7
@@ -23,6 +22,9 @@ gunicorn==21.2.0
 
 # HTTP Requests
 requests==2.31.0
+
+# Authentication
+djangorestframework-simplejwt==5.5.1
 
 # AI/ML Libraries
 transformers>=4.35.2
